@@ -75,7 +75,6 @@ unsigned long schurNumberIterative(unsigned long pmax, unsigned long *nbests) {
         // Placer n+1 dans une des huches en conservant la sans-sommité
         limbnum = ((n+1)>>7)+1;
         rem = 64 - (n%64);
-        printf("%lu %lu %lu %lu\n", n, rem, rem%0x10000000, ((unsigned long)rem>>16));
         if (i < p) {
             // Tester si l'ensemble obtenu en ajoutant n à la huche i est sans-somme
             set = sfpartitioninvert[i]->_mp_d;
@@ -83,7 +82,6 @@ unsigned long schurNumberIterative(unsigned long pmax, unsigned long *nbests) {
             mpn_rshift(work0, work1, limbnum, rem%0x10000000);
             mpn_rshift(work1, work0, limbnum, ((unsigned long)rem>>16));
             set = sfpartition[i]->_mp_d;
-            printf("%lu %lu\n", *set, *work1);
             mpn_and_n(work0, set, work1, limbnum);
             isSumFree = mpn_zero_p(work0, limbnum);
             if (isSumFree) {
@@ -110,7 +108,6 @@ unsigned long schurNumberIterative(unsigned long pmax, unsigned long *nbests) {
             mpn_rshift(work0, work1, limbnum, rem%0x10000000);
             mpn_rshift(work1, work0, limbnum, ((unsigned long)rem>>16));
             set = sfpartition[i]->_mp_d;
-            printf("%lu %lu\n", *set, *work1);
             mpn_and_n(work0, set, work1, limbnum);
             isSumFree = mpn_zero_p(work0, limbnum);
             if (isSumFree) {
