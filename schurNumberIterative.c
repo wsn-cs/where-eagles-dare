@@ -103,28 +103,19 @@ unsigned long schurNumberIterative(unsigned long pmax, unsigned long *nbests) {
             }
         } else if (i == p && p < pmax) {
             // Cas particulier où il faut remplir une nouvelle huche
-            set = sfpartitioninvert[i]->_mp_d;
-            mpn_copyd(work1, &set[sfpartitioninvert[i]->_mp_alloc - limbnum], limbnum);
-            mpn_rshift(work0, work1, limbnum, rem%0x10000000);
-            mpn_rshift(work1, work0, limbnum, ((unsigned long)rem>>16));
-            set = sfpartition[i]->_mp_d;
-            mpn_and_n(work0, set, work1, limbnum);
-            isSumFree = mpn_zero_p(work0, limbnum);
-            if (isSumFree) {
-                mpz_setbit(sfpartition[i], n); // Ajoute n+1 à la huche i
-                mpz_setbit(sfpartitioninvert[i], 64*(sfpartitioninvert[i]->_mp_alloc) - n - 1);
-                n++;
-                if (n > nbests[p]) {
-                    nbests[p] = n;
-                    if (n >= 64*limbmax -1) {
-                        limbmax *= 2;
-                        work0 = realloc(work0, limbmax);
-                        work1 = realloc(work1, limbmax);
-                    }
+            mpz_setbit(sfpartition[i], n); // Ajoute n+1 à la huche i
+            mpz_setbit(sfpartitioninvert[i], 64*(sfpartitioninvert[i]->_mp_alloc) - n - 1);
+            n++;
+            if (n > nbests[p]) {
+                nbests[p] = n;
+                if (n >= 64*limbmax -1) {
+                    limbmax *= 2;
+                    work0 = realloc(work0, limbmax);
+                    work1 = realloc(work1, limbmax);
                 }
-                i = 0;
-                p++;
             }
+            i = 0;
+            p++;
         } else {
             // Dépiler
             n --;
