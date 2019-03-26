@@ -291,7 +291,7 @@ unsigned long schurNumberSimpleMonteCarloLevelIteration(partition_t *sfpartition
     return sfpartitionstruc->nbest;
 }
 
-unsigned long schurNumberSimpleNestedMonteCarlo(unsigned int p, unsigned int level) {
+unsigned long schurNumberSimpleNestedMonteCarlo(unsigned int p, unsigned int level, unsigned int simulnum) {
     unsigned long nbest;
     unsigned int i;
     mp_limb_t *work0;
@@ -321,15 +321,18 @@ unsigned long schurNumberSimpleNestedMonteCarlo(unsigned int p, unsigned int lev
     sfpartitionstruc.partitionbest = sfpartitionbest;
     sfpartitionstruc.pmax = p;
     sfpartitionstruc.nbest = 1;
-    
-    /*Création de la première partition {{1}}*/
-    sfpartitionstruc.n = 1;  // Taille de l'intervalle
-    sfpartitionstruc.p = 1;  // Nombre de huches non vides
-    *sfpartition[0] = (mp_limb_t)1;
-    sfpartitioninvert[0][p - 1] = (mp_limb_t)1<<(mp_bits_per_limb-1);
-    
-    /*Lancement de la simulation de niveau level*/
-    nbest = schurNumberSimpleMonteCarloLevelIteration(&sfpartitionstruc, level);
+ 
+    for (i=0; i<simulnum; i++) {
+        /*Création de la première partition {{1}}*/
+        sfpartitionstruc.limbsize = 1;
+        sfpartitionstruc.n = 1;  // Taille de l'intervalle
+        sfpartitionstruc.p = 1;  // Nombre de huches non vides
+        *sfpartition[0] = (mp_limb_t)1;
+        sfpartitioninvert[0][p - 1] = (mp_limb_t)1<<(mp_bits_per_limb-1);
+        
+        /*Lancement de la simulation de niveau level*/
+        nbest = schurNumberSimpleMonteCarloLevelIteration(&sfpartitionstruc, level);
+    }
     
     /*Nettoyage*/
     for (i=0; i<p; i++) {
