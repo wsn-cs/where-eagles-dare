@@ -24,7 +24,7 @@ while (reptr == NULL && resize > size) { \
 resize -= resize >> 1;\
 reptr = realloc(ptr, resize);\
 } \
-if (resize != size) { \
+if (reptr != NULL) { \
  ptr = reptr;\
 } \
 } while(0)
@@ -81,6 +81,7 @@ void partition_realloc(partition_t *partitionstruc) {
         partitioninvert--;
         mpn_lshift(*partitioninvert, *partitioninvert, limbrealloc, limbrealloc - limballoc);
     }
+    partitionstruc->limballoc = limbrealloc;
 }
 
 unsigned long schurNumberSimpleMonteCarloLevelIteration(partition_t *sfpartitionstruc, unsigned int level) {
