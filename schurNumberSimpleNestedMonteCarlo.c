@@ -163,6 +163,7 @@ unsigned long schurNumberSimpleMonteCarloLevelIteration(partition_t *sfpartition
                 
                 if (n >= nmax) {
                     partition_realloc(sfpartitionstruc);
+                    nmax = mp_bits_per_limb * sfpartitionstruc->limballoc;
                 }
                 
                 if (!nmodbpl) {
@@ -206,6 +207,7 @@ unsigned long schurNumberSimpleMonteCarloLevelIteration(partition_t *sfpartition
         
         if (n >= nmax) {
             partition_realloc(sfpartitionstruc);
+            nmax = mp_bits_per_limb * sfpartitionstruc->limballoc;
         }
         
         for (i=0; i<p; i++) {
