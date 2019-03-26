@@ -60,8 +60,11 @@ void partition_realloc(partition_t *partitionstruc) {
     
     allocptr = partitionstruc->work0;
     REALLOC(allocptr, reallocptr, limballoc, limbrealloc);
+    partitionstruc->work0 = allocptr;
+ 
     allocptr = partitionstruc->work1;
     REALLOC(allocptr, reallocptr, limballoc, limbrealloc);
+    partitionstruc->work1 = allocptr;
     
     partition = partitionstruc->partition;
     partitioninvert = partitionstruc->partitioninvert;
@@ -69,10 +72,16 @@ void partition_realloc(partition_t *partitionstruc) {
     for (i=0; i<p; i++) {
         allocptr = *partition;
         REALLOC(allocptr, reallocptr, limballoc, limbrealloc);
+        partition = &allocptr;
+     
         allocptr = *partitioninvert;
         REALLOC(allocptr, reallocptr, limballoc, limbrealloc);
+        partitioninvert = &allocptr;
+     
         allocptr = *partitionbest;
         REALLOC(allocptr, reallocptr, limballoc, limbrealloc);
+        partitionbest = &allocptr;
+     
         partition++;
         partitioninvert++;
         partitionbest++;
