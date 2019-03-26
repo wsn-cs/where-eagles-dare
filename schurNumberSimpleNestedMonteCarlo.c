@@ -292,6 +292,8 @@ unsigned long schurNumberSimpleMonteCarloLevelIteration(partition_t *sfpartition
 }
 
 unsigned long schurNumberSimpleNestedMonteCarlo(unsigned int p, unsigned int level, unsigned int simulnum) {
+    /*Fonction à lancer pour trouver une borne inférieure au nombre de Schur S(p).
+     Elle alloue la mémoire nécessaire aux simulations et lance simulnum simulations de niveau level.*/
     unsigned long nbest;
     unsigned int i;
     mp_limb_t *work0;
