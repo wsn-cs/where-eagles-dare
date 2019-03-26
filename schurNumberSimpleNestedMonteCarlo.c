@@ -317,9 +317,11 @@ unsigned long schurNumberSimpleNestedMonteCarlo(unsigned int p, unsigned int lev
     for (i=0; i<p; i++) {
         free(sfpartition[i]);
         free(sfpartitioninvert[i]);
+        free(sfpartitionbest[i]);
     }
     free(sfpartition);
     free(sfpartitioninvert);
+    free(sfpartitionbest);
     free(work0);
     free(work1);
     
