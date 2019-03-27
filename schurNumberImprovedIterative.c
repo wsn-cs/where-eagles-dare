@@ -1,3 +1,10 @@
+//
+//  schurNumberImprovedIterative.c
+//  SchurNumber
+//
+//  Created by Gabriel Merlin on 28/02/2019.
+//
+
 unsigned long schurNumberIterWithUnstack(unsigned long pmax, unsigned long *nbests, mpz_t iternum) {
     /*
      Cette fonction calcule successivement les nombres de Schur S(p) pour p<= pmax.
