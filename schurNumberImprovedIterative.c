@@ -16,6 +16,30 @@
 #define GMP_2EXP_NUMB_BITS 5
 #endif
 
+mp_bitcnt_t mpn_rscan1 (mp_srcptr up, mp_bitcnt_t starting_bit)
+{
+    /*Scan decreasingly from a given bit position for the last set bit.
+    This function is a modification of mpn_scan1.*/
+    mp_size_t starting_word;
+    mp_limb_t alimb;
+    int cnt;
+    mp_srcptr p;
+    
+    /* Start at the word implied by STARTING_BIT.  */
+    starting_word = starting_bit / GMP_NUMB_BITS;
+    p = up + starting_word;
+    alimb = *p++;
+    
+    /* Mask off any bits after STARTING_BIT in the first limb.  */
+    alimb &= - (mp_limb_t) 1 >> (GMP_NUMB_BITS - starting_bit % GMP_NUMB_BITS -1);
+    
+    while (alimb == 0)
+        alimb = *p--;
+    
+    count_leading_zeros(cnt, alimb);
+    return (p - up) * GMP_NUMB_BITS - cnt;
+}
+
 unsigned long schurNumberIterWithUnstack(unsigned long pmax, unsigned long *nbests, mpz_t iternum) {
     /*
      Cette fonction calcule successivement les nombres de Schur S(p) pour p<= pmax.
