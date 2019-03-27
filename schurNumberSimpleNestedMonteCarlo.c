@@ -7,7 +7,6 @@
 
 #include <stdlib.h>
 #include <gmp.h>
-#include <stdio.h>
 
 #if GMP_NUMB_BITS == 64
 #define GMP_2EXP_NUMB_BITS 6
