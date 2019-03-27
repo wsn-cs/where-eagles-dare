@@ -5,6 +5,17 @@
 //  Created by Gabriel Merlin on 28/02/2019.
 //
 
+#include <stdlib.h>
+#include <gmp.h>
+
+#if GMP_NUMB_BITS == 64
+#define GMP_2EXP_NUMB_BITS 6
+#elif GMP_NUMB_BITS == 128
+#define GMP_2EXP_NUMB_BITS 7
+#elif GMP_NUMB_BITS == 32
+#define GMP_2EXP_NUMB_BITS 5
+#endif
+
 unsigned long schurNumberIterWithUnstack(unsigned long pmax, unsigned long *nbests, mpz_t iternum) {
     /*
      Cette fonction calcule successivement les nombres de Schur S(p) pour p<= pmax.
