@@ -135,7 +135,9 @@ unsigned long schurNumberSimpleMonteCarloLevelIteration(partition_t *sfpartition
         } else {
             prand = p + 1;
         }
-        while (prand) {
+        isSumFree = 1;
+     
+        while (isSumFree) {
             
             if (n >= nmax) {
                 partition_realloc(sfpartitionstruc, sfpartitionbest);
@@ -153,30 +155,19 @@ unsigned long schurNumberSimpleMonteCarloLevelIteration(partition_t *sfpartition
                 limbsize++;
             }
             
-            /*Touver les huches susceptibles d'accueillir n+1*/
-            prand = 0;
-            for (i=0; i<p; i++) {
-                /*Tester si la huche i reste sans-somme après adjonction de n+1*/
-                set = sfpartitioninvert[i];
-                mpn_copyd(work0, &set[limballoc - wlimbsize], wlimbsize);
-                mpn_rshift(work1, work0, wlimbsize, shift);
-                set = sfpartition[i];
-                mpn_and_n(work0, set, work1, wlimbsize);
-                if (mpn_zero_p(work0, wlimbsize)) {
-                    ivalid[prand] = i;
-                    prand++;
-                }
-            }
-            if (p < pmax) {
-                ivalid[prand] = p;
-                prand++;
-            }
+            /* Sélectionner une huche aléatoirement */
+            i = arc4random_uniform(prand);
+            i = ivalid[i];
             
-            if (prand) {
-                /* Sélectionner une huche aléatoirement */
-                i = arc4random_uniform(prand);
-                i = ivalid[i];
-                
+            /*Tester si il est possible de mettre n+1 dans la huche i.*/
+            set = sfpartitioninvert[i];
+            mpn_copyd(work0, set + limballoc - wlimbsize, wlimbsize);
+            mpn_rshift(work1, work0, wlimbsize, shift);
+            set = sfpartition[i];
+            mpn_and_n(work0, set, work1, wlimbsize);
+            isSumFree = mpn_zero_p(work0, wlimbsize);
+            
+            if (isSumFree) {
                 /* Ajouter n+1 à la huche i */
                 mask1 = (mp_limb_t)1<<nmodbpl;
                 sfpartition[i][limbsize -1] |= mask1;
@@ -184,6 +175,11 @@ unsigned long schurNumberSimpleMonteCarloLevelIteration(partition_t *sfpartition
                 sfpartitioninvert[i][limballoc - limbsize] |= mask2;
                 if (i == p) {
                     p++;
+                    if (p == pmax) {
+                        prand = p;  // Le tirage de la partition est fait parmi 0,…,prand-1
+                    } else {
+                        prand = p + 1;
+                    }
                 }
                 /* Incrémenter n */
                 n++;
