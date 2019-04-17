@@ -1,0 +1,104 @@
+\documentclass{report}
+\usepackage[utf8]{inputenc}
+\usepackage{hyperref}
+\usepackage{geometry} \geometry{hmargin=1.5cm,vmargin=1.5cm}
+
+\title{Weak Schur Numbers, 1ère version}
+\author{Benoît Ferté, Gabriel Merlin, Thomas Bianco, Mario Michelessa, Richard Abou Chaaya}
+\date{Avril 2019}
+
+
+
+\begin{document}
+\renewcommand{\thesection}{\arabic{section}} 
+
+
+
+\maketitle
+
+\tableofcontents
+\newpage
+
+\section{Description}
+On appelle nombre de Schur, noté $S(k)$, le plus grand entier N tel que :
+\begin{center}
+    
+$ \exists A_1... A_k \ tels \ que \ \bigcup(A_i) = \{1,N\} $
+
+et
+
+$\forall i\in \{1,k\} \not\exists \ a,b,c\in A_i \ tels \  que \ a+b=c  $
+
+\end{center}
+Dans le cas où $a \neq b$, on appellera N nombre de Schur faible, noté WS(k).
+\\
+On connait actuellement les nombres de Schur jusqu'à 5, et les nombres de Schur faibles jusqu'à 4. Pour les valeurs supérieures, on ne connait que des bornes, supérieures et inférieures. L'enjeu de ce projet est de parvenir à améliorer ces bornes.
+\\
+
+
+\begin{tabular}{c|c|c|c|c|c|c|c|c|c|c|c|c}
+    \hline
+    k & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12 \\ \hline
+    S(k) & 1 & 4 & 13 & 44 & 160 [6] &  &  &  &  &  &  & \\
+    borne inf &  &  &  &  &  & 536 [2] & 1680 [2] & 5041 [5] & 15124 [5] & 51120 [7] & 172216 [7] & 575664 [7] \\ 
+    borne sup &  &  &  &  &  & 1927 & 13490 & 107921 & 971290 & 8956901 & 98525912 & 1182310945 \\ \hline
+    WS(k) & 2 & 8 & 23 & 66 &  &  &  &  &  &  &  &  \\ 
+    borne inf &  &  &  &  & 196 [1] & 582 [3] & 1740 [4] & 5201 [4] & 15596 [4] & 51520 & 172216 & 575664 \\
+    borne sup &  &  &  &  & 1630 & 11742 & 95900 & 876808 & 8877690 & 98641010 & 1193556233 & 15624736140 \\ \hline
+    
+    Valeur max & 2 & 8 & 23 & 66 & 196 & 582 & 1740 & 5201 & 15596 & 44455 [9] & 127575 [9] & 372389 [9] \\ 
+    atteinte &  &  &  &  &  &  &  &  &  &  &  &  \\ \hline
+    
+\end{tabular}
+
+Les bornes supérieures viennent de [9] et [10]
+
+\section{Planning}
+
+Divers articles seront étudiés tout au long du projet.
+\\ En parallèle, des codes seront implémentés pour tenter de trouver des bornes les plus hautes possibles.
+\\ L'objectif à court terme est de réussir à implanter l'algorithme de Nested Monte-Carlo 
+
+\section{Avancement}
+
+Articles lus (et compris) : 
+\begin{itemize}
+    \item An abstract procedure to compute weak Schur numbers, B.Bouzy
+    \item Lower bounds for S(n), Abbott et Hanson
+\end{itemize}
+Codes réalisés : 
+\begin{itemize}
+    \item Monte-Carlo naïf
+    \item nested Monte-Carlo (à debugger)
+\end{itemize}
+
+\section{Annexes}
+Des slides, supports pour une présentation orale, ont été réalisées à chaque séance.
+\\ Les différents codes se trouvent sur un git.
+
+\begin{thebibliography}{}
+\bibitem{1}
+ S. Eliahou, J. M. Marin, M. P. Revuelta and M. I. Sanz. Weak Schur numbers and the search for G. W. Walker’s lost partitions, in Computers & Mathematics with Applications, Vol. 63, 2012, 175–182.
+\bibitem{2}
+ H. Fredricksen and M. M. Sweet. Symmetric sum-free partitions and lower bounds for Schur numbers, in Electronic Journal of Combinatorics, Vol. 7, R32, 2000.
+\bibitem{3}
+  S. Eliahou, C. Fonlupt, J. Fromentin, V. Marion-Poty, D. Robilliard and F. Teytaud. Investigating Monte-Carlo methods on the weak Schur problem, in Evolutionary Computation in Combinatorial Optimization, Vol. 7832 of Lecture Notes in Computer Science, Springer, Berlin, 2013, 191–201.
+\bibitem{4}
+ F. Rafilipojoana. LOWER BOUNDS ON THE WEAK SCHUR NUMBERS UP TO 9 COLORS.
+\bibitem{5}   
+  I. Schur. Uber die Kongruenz xm + ym = zm (mod p), in Jahresbericht der Deutschen Mathematiker-Vereinigung, Vol. 25, 1917, 114–116
+\bibitem{6}
+ M. Heule. Schur Number Five, in the Thirty-Second AAAI Conference on Artificial Intelligence 
+\bibitem{7}
+ Abbott and Hanson, A problem of Schur and its generalizations, Acta Arithmetica XX
+\bibitem{8}
+ A lower bound for weak Schur numbers with a deterministic algorithm, Ghada Ben Hassine, Pierre Bergé, Arpad Rimmel, Joanna Tomasik
+\bibitem{9}
+ Irving, 1973, An extension of Schur’s theorem on sum-free partition
+\bibitem{10}
+ P. Bornsztein. On an extension of a theorem of Schur.Acta Arith., 101:395–399, 2002
+\end{thebibliography}
+
+
+
+\end{document}
