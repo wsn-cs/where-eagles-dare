@@ -1,10 +1,11 @@
 \documentclass{report}
 \usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
 \usepackage{hyperref}
 \usepackage{geometry} \geometry{hmargin=1.5cm,vmargin=1.5cm}
 
-\title{Weak Schur Numbers, 1�re version}
-\author{Beno�t Fert�, Gabriel Merlin, Thomas Bianco, Mario Michelessa, Richard Abou Chaaya}
+\title{Weak Schur Numbers, 1ère version}
+\author{Benoît Ferté, Gabriel Merlin, Thomas Bianco, Mario Michelessa, Richard Abou Chaaya}
 \date{Avril 2019}
 
 
@@ -20,7 +21,18 @@
 \newpage
 
 \section{Description}
-On appelle nombre de Schur, not� $S(k)$, le plus grand entier N tel que :
+Notre travail, encadré par Joanna Tomasik et Arpad Rimmel porte sur les nombre de Schur, un sujet se situant à la frontière entre algorithmique et théorie des nombres.
+
+
+« Quel est le nombre minimal d’invités devant être présents à une soirée pour être sûr qu’au moins 3 personnes se connaissent ou qu’au moins 3 ne se connaissent pas ? » 
+L’étude des questions de cette forme ( « combien d'éléments d'une certaine structure doivent être considérés pour qu'une propriété particulière se vérifie ? » ) est appelée théorie de Ramsey. 
+
+
+Dans ce cadre, nous considérons la question suivante : « Combien de nombres entiers consécutifs doit-on considérer pour être sûr que toute coloration de ces entiers contient un triplet monochromatique a, b, c vérifiant a+b=c ?». Ce nombre est appelé nombre de Schur et a été initialement introduit pour réfuter la version « modulo p » du dernier problème de Fermat. 
+
+
+\section{Description mathématique}
+On appelle nombre de Schur, noté $S(k)$, le plus grand entier N tel que :
 \begin{center}
     
 $ \exists A_1... A_k \ tels \ que \ \bigcup(A_i) = \{1,N\} $
@@ -30,9 +42,9 @@ et
 $\forall i\in \{1,k\} \not\exists \ a,b,c\in A_i \ tels \  que \ a+b=c  $
 
 \end{center}
-Dans le cas o� $a \neq b$, on appellera N nombre de Schur faible, not� WS(k).
+Dans le cas où $a \neq b$, on appellera N nombre de Schur faible, noté WS(k).
 \\
-On connait actuellement les nombres de Schur jusqu'� 5, et les nombres de Schur faibles jusqu'� 4. Pour les valeurs sup�rieures, on ne connait que des bornes, sup�rieures et inf�rieures. L'enjeu de ce projet est de parvenir � am�liorer ces bornes.
+On connait actuellement les nombres de Schur jusqu'à 5, et les nombres de Schur faibles jusqu'à 4. Pour les valeurs supérieures, on ne connait que des bornes, supérieures et inférieures. L'enjeu de ce projet est de parvenir à améliorer ces bornes.
 \\
 
 
@@ -51,13 +63,13 @@ On connait actuellement les nombres de Schur jusqu'� 5, et les nombres de Schur 
     
 \end{tabular}
 
-Les bornes sup�rieures viennent de [9] et [10]
+Les bornes supérieures viennent de [9] et [10]
 
 \section{Planning}
 
-Divers articles seront �tudi�s tout au long du projet.
-\\ En parall�le, des codes seront impl�ment�s pour tenter de trouver des bornes les plus hautes possibles.
-\\ L'objectif � court terme est de r�ussir � implanter l'algorithme de Nested Monte-Carlo 
+Divers articles seront étudiés tout au long du projet.
+\\ En parallèle, des codes seront implémentés pour tenter de trouver des bornes les plus hautes possibles.
+\\ L'objectif à court terme est de réussir à implanter l'algorithme de Nested Monte-Carlo 
 
 \section{Avancement}
 
@@ -66,39 +78,40 @@ Articles lus (et compris) :
     \item An abstract procedure to compute weak Schur numbers, B.Bouzy
     \item Lower bounds for S(n), Abbott et Hanson
 \end{itemize}
-Codes r�alis�s : 
+Codes réalisés : 
 \begin{itemize}
-    \item Monte-Carlo na�f
-    \item nested Monte-Carlo (� debugger)
+    \item Monte-Carlo naïf
+    \item nested Monte-Carlo (à debugger)
 \end{itemize}
 
 \section{Annexes}
-Des slides, supports pour une pr�sentation orale, ont �t� r�alis�es � chaque s�ance.
-\\ Les diff�rents codes se trouvent sur un git.
+Des slides, supports pour une présentation orale, ont été réalisées à chaque séance.
+\\ Les différents codes se trouvent sur un git.
 
 \begin{thebibliography}{}
 \bibitem{1}
- S. Eliahou, J. M. Marin, M. P. Revuelta and M. I. Sanz. Weak Schur numbers and the search for G. W. Walker�s lost partitions, in Computers & Mathematics with Applications, Vol. 63, 2012, 175�182.
+ S. Eliahou, J. M. Marin, M. P. Revuelta and M. I. Sanz. Weak Schur numbers and the search for G. W. Walker’s lost partitions, in Computers & Mathematics with Applications, Vol. 63, 2012, 175–182.
 \bibitem{2}
  H. Fredricksen and M. M. Sweet. Symmetric sum-free partitions and lower bounds for Schur numbers, in Electronic Journal of Combinatorics, Vol. 7, R32, 2000.
 \bibitem{3}
-  S. Eliahou, C. Fonlupt, J. Fromentin, V. Marion-Poty, D. Robilliard and F. Teytaud. Investigating Monte-Carlo methods on the weak Schur problem, in Evolutionary Computation in Combinatorial Optimization, Vol. 7832 of Lecture Notes in Computer Science, Springer, Berlin, 2013, 191�201.
+  S. Eliahou, C. Fonlupt, J. Fromentin, V. Marion-Poty, D. Robilliard and F. Teytaud. Investigating Monte-Carlo methods on the weak Schur problem, in Evolutionary Computation in Combinatorial Optimization, Vol. 7832 of Lecture Notes in Computer Science, Springer, Berlin, 2013, 191–201.
 \bibitem{4}
  F. Rafilipojoana. LOWER BOUNDS ON THE WEAK SCHUR NUMBERS UP TO 9 COLORS.
 \bibitem{5}   
-  I. Schur. Uber die Kongruenz xm + ym = zm (mod p), in Jahresbericht der Deutschen Mathematiker-Vereinigung, Vol. 25, 1917, 114�116
+  I. Schur. Uber die Kongruenz xm + ym = zm (mod p), in Jahresbericht der Deutschen Mathematiker-Vereinigung, Vol. 25, 1917, 114–116
 \bibitem{6}
  M. Heule. Schur Number Five, in the Thirty-Second AAAI Conference on Artificial Intelligence 
 \bibitem{7}
  Abbott and Hanson, A problem of Schur and its generalizations, Acta Arithmetica XX
 \bibitem{8}
- A lower bound for weak Schur numbers with a deterministic algorithm, Ghada Ben Hassine, Pierre Berg�, Arpad Rimmel, Joanna Tomasik
+ A lower bound for weak Schur numbers with a deterministic algorithm, Ghada Ben Hassine, Pierre Bergé, Arpad Rimmel, Joanna Tomasik
 \bibitem{9}
- Irving, 1973, An extension of Schur�s theorem on sum-free partition
+ Irving, 1973, An extension of Schur’s theorem on sum-free partition
 \bibitem{10}
- P. Bornsztein. On an extension of a theorem of Schur.Acta Arith., 101:395�399, 2002
+ P. Bornsztein. On an extension of a theorem of Schur.Acta Arith., 101:395–399, 2002
 \end{thebibliography}
 
 
 
 \end{document}
+
