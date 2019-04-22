@@ -6,8 +6,7 @@
 //  Copyright © 2019 rubis. All rights reserved.
 //
 
-#include <stdlib.h>
-#include <gmp.h>
+#include "schurNumberNestedMonteCarloHeader.h"
 
 #if GMP_NUMB_BITS == 64
 #define GMP_2EXP_NUMB_BITS 6
@@ -28,23 +27,6 @@ if (reptr != NULL) { \
  ptr = reptr;\
 } \
 } while(0)
-
-struct schur_partition_struct {
-    unsigned int pmax;  // Nombre maximal de huches
-    unsigned int p;     // Nombre de huches non vides
-    
-    unsigned long n;    // Entier courant
-    mp_size_t limballoc;// Nombre de limbes alloués à chaque huche
-    mp_size_t limbsize; // Nombre de limbes utilisés par chaque huche
-    
-    mp_limb_t **partition;
-    mp_limb_t **partitioninvert;
-    
-    mp_limb_t *work0;
-    mp_limb_t *work1;
-};
-
-typedef struct schur_partition_struct partition_t;
 
 void partition_realloc(partition_t *partitionstruc, mp_limb_t **partitionbest) {
     unsigned int i, p;
