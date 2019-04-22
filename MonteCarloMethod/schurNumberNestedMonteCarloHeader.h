@@ -13,9 +13,6 @@
 #include <stdlib.h>
 #include <gmp.h>
 
-#include <stdlib.h>
-#include <gmp.h>
-
 struct schur_partition_struct {
     unsigned int pmax;  // Nombre maximal de huches
     unsigned int p;     // Nombre de huches non vides
