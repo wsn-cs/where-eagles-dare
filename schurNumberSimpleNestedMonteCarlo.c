@@ -93,12 +93,11 @@ unsigned long schurNumberSimpleMonteCarloLevelIteration(partition_t *sfpartition
     /*Effectue une simulation de niveau l sur sfpartition et renvoie le score du meilleur résultat.
      La partition correspondant est conservée dans sfpartitionbest.*/
     unsigned long n, nmax, nsimulated, nbest;
-    unsigned int i, j, simul, *ivalid;
+    unsigned int i, j, simul;
     unsigned int p, prand, pmax, pbestrec;
     char isSumFree;
     mp_limb_t *work0;
     mp_limb_t *work1;
-    mp_limb_t *set;
     mp_limb_t **sfpartition;
     mp_limb_t **sfpartitioninvert;
     mp_limb_t **sfpartitionbestrec;//Tableau servant au niveau en-dessous
@@ -128,7 +127,6 @@ unsigned long schurNumberSimpleMonteCarloLevelIteration(partition_t *sfpartition
     
     if (!level) {
         /*Simulation de niveau 0*/
-        ivalid = calloc(pmax, sizeof(unsigned int));    //Tableau contenant les indices des huches pouvant accueillir n+1
         nbest = n;
         if (p == pmax) {
             prand = p;  // Le tirage de la partition est fait parmi 0,…,prand-1
@@ -140,12 +138,14 @@ unsigned long schurNumberSimpleMonteCarloLevelIteration(partition_t *sfpartition
         while (isSumFree) {
             
             if (n >= nmax) {
+                /*Augmentation de la taille de la partition.*/
                 partition_realloc(sfpartitionstruc, sfpartitionbest);
                 nmax = mp_bits_per_limb * sfpartitionstruc->limballoc;
                 if (n == nmax) {
                     prand = 0;
                 }
             }
+         
             if (!nmodbpl) {
                 /* mp_bits_per_limb divise n, donc il faut commencer à remplir un nouveau limbe. */
                 for (i=0; i<pmax; i++) {
@@ -155,16 +155,13 @@ unsigned long schurNumberSimpleMonteCarloLevelIteration(partition_t *sfpartition
                 limbsize++;
             }
             
-            /* Sélectionner une huche aléatoirement */
+            /* Sélectionner une huche aléatoirement parmi 0,…,prand-1*/
             i = arc4random_uniform(prand);
-            i = ivalid[i];
             
             /*Tester si il est possible de mettre n+1 dans la huche i.*/
-            set = sfpartitioninvert[i];
-            mpn_copyd(work0, set + limballoc - wlimbsize, wlimbsize);
+            mpn_copyd(work0, sfpartitioninvert[i] + limballoc - wlimbsize, wlimbsize);
             mpn_rshift(work1, work0, wlimbsize, shift);
-            set = sfpartition[i];
-            mpn_and_n(work0, set, work1, wlimbsize);
+            mpn_and_n(work0, sfpartition[i], work1, wlimbsize);
             isSumFree = mpn_zero_p(work0, wlimbsize);
             
             if (isSumFree) {
@@ -174,6 +171,7 @@ unsigned long schurNumberSimpleMonteCarloLevelIteration(partition_t *sfpartition
                 mask2 = (mp_limb_t)1<<(shift - 1);
                 sfpartitioninvert[i][limballoc - limbsize] |= mask2;
                 if (i == p) {
+                    /*Une nouvelle huche est commencée.*/
                     p++;
                     if (p == pmax) {
                         prand = p;  // Le tirage de la partition est fait parmi 0,…,prand-1
@@ -189,14 +187,12 @@ unsigned long schurNumberSimpleMonteCarloLevelIteration(partition_t *sfpartition
             }
         }
         
-        /*Assigner la partition obtenue à sfpartitionbest.*/
+        /*Sauvegarder la partition obtenue dans sfpartitionbest.*/
         for (i=0; i<p; i++) {
             mpn_copyi(sfpartitionbest[i], sfpartition[i], limbsize);
         }
         nbest = n-1;
         *pbestptr = p;
-     
-        free(ivalid);
         
         /*Revenir à la partition initiale*/
         wlimbsize = sfpartitionstruc->limbsize;
@@ -205,13 +201,14 @@ unsigned long schurNumberSimpleMonteCarloLevelIteration(partition_t *sfpartition
         mask2 = (mp_limb_t)GMP_NUMB_MAX<<shift;
         for (i=0; i<p; i++) {
             mpn_zero(sfpartition[i] + wlimbsize, limbsize - wlimbsize);
-            mpn_zero(sfpartitioninvert[i] + limballoc - limbsize -1, limbsize - wlimbsize);
-            sfpartition[i][wlimbsize-1] |= mask1;
-            sfpartitioninvert[i][limballoc - wlimbsize] |= mask2;
+            mpn_zero(sfpartitioninvert[i] + limballoc - limbsize, limbsize - wlimbsize);
+            sfpartition[i][wlimbsize-1] &= mask1;
+            sfpartitioninvert[i][limballoc - wlimbsize] &= mask2;
         }
         
     } else {
         /*Simulation de niveau > 0*/
+        /*Création de la meilleure partition utilisée au niveau level-1*/
         sfpartitionbestrec = calloc(pmax, sizeof(mp_limb_t *));
         for (i=0; i<pmax; i++) {
             sfpartitionbestrec[i] = calloc(limballoc, sizeof(mp_limb_t));
@@ -222,6 +219,7 @@ unsigned long schurNumberSimpleMonteCarloLevelIteration(partition_t *sfpartition
         mask2 = (mp_limb_t)1<<(shift - 1);
         
         if (n >= nmax) {
+            /*Augmentation de la taille de la partition.*/
             partition_realloc(sfpartitionstruc, sfpartitionbest);
             limballoc = sfpartitionstruc->limballoc;
             nmax = mp_bits_per_limb * limballoc;
@@ -242,11 +240,9 @@ unsigned long schurNumberSimpleMonteCarloLevelIteration(partition_t *sfpartition
         
         for (i=0; i<p; i++) {
             /*Tester si il est possible d'ajouter n+1 à la huche i*/
-            set = sfpartitioninvert[i];
-            mpn_copyd(work0, set + limballoc - wlimbsize, wlimbsize);
+            mpn_copyd(work0, sfpartitioninvert[i]t + limballoc - wlimbsize, wlimbsize);
             mpn_rshift(work1, work0, wlimbsize, shift);
-            set = sfpartition[i];
-            mpn_and_n(work0, set, work1, wlimbsize);
+            mpn_and_n(work0, sfpartition[i], work1, wlimbsize);
             isSumFree = mpn_zero_p(work0, wlimbsize);
             if (isSumFree) {
                 /*Ajouter n+1 à la huche i*/
@@ -277,9 +273,13 @@ unsigned long schurNumberSimpleMonteCarloLevelIteration(partition_t *sfpartition
                         }
                     }
                 }
-                /*Retirer n+1 de la huche i*/
-                sfpartition[i][limbsize -1] ^= mask1;
-                sfpartitioninvert[i][limballoc - limbsize] ^= mask2;
+                /*Revenir à la partition initiale.*/
+                for (j=0; j < pmax; j++) {
+                    mpn_zero(sfpartition[j] + limbsize, limballoc - limbsize);
+                    mpn_zero(sfpartitioninvert[j], limballoc - limbsize - 1);
+                    sfpartition[j][limbsize-1] &= GMP_NUMB_MAX>>shift;
+                    sfpartitioninvert[j][limballoc - limbsize] &= GMP_NUMB_MAX<<shift;
+                }
                 sfpartitionstruc->n = n;
                 sfpartitionstruc->p = p;
                 sfpartitionstruc->limbsize = limbsize;
@@ -316,9 +316,13 @@ unsigned long schurNumberSimpleMonteCarloLevelIteration(partition_t *sfpartition
                     }
                 }
             }
-            /*Retirer n+1 de la huche i*/
-            sfpartition[p][limbsize -1] ^= mask1;
-            sfpartitioninvert[p][limballoc - limbsize] ^= mask2;
+            /*Revenir à la partition initiale.*/
+            for (j=0; j < pmax; j++) {
+                mpn_zero(sfpartition[j] + limbsize, limballoc - limbsize);
+                mpn_zero(sfpartitioninvert[j], limballoc - limbsize -1);
+                sfpartition[j][limbsize-1] &= GMP_NUMB_MAX>>shift;
+                sfpartitioninvert[j][limballoc - limbsize] &= GMP_NUMB_MAX<<shift;
+            }
             sfpartitionstruc->n = n;
             sfpartitionstruc->p = p;
             sfpartitionstruc->limbsize = limbsize;
@@ -334,7 +338,9 @@ unsigned long schurNumberSimpleMonteCarloLevelIteration(partition_t *sfpartition
             sfpartition[i][limbsize -1] |= mask1;
             sfpartitioninvert[i][limballoc - limbsize] |= mask2;
             if (i == p) {
+                /*Une nouvelle huche est commencée.*/
                 p++;
+                sfpartitionstruc->p = p;
             }
             /* Incrémenter n */
             n++;
@@ -360,28 +366,27 @@ unsigned long schurNumberSimpleNestedMonteCarlo(unsigned int p, unsigned int lev
      Les simulations de niveau 0 seront effectués simulnum0 fois.*/
     unsigned long nbest, nsimulated;
     unsigned int i, j, pbest;
+    mp_size_t limballoc;
     mp_limb_t *work0;
     mp_limb_t *work1;
     partition_t sfpartitionstruc;
     mp_limb_t **sfpartition;
     mp_limb_t **sfpartitioninvert;
     mp_limb_t **sfpartitionbest;
-    mp_limb_t **sfpartitionbestglobal;
     
     /*Initialisation*/
-    work0 = calloc(p, sizeof(mp_limb_t));
-    work1 = calloc(p, sizeof(mp_limb_t));
+    limballoc = (1<<(2*p))>>mp_bits_per_limb;
+    work0 = calloc(limballoc, sizeof(mp_limb_t));
+    work1 = calloc(limballoc, sizeof(mp_limb_t));
     sfpartition = calloc(p, sizeof(mp_limb_t *));          //Tableau contenant la partition
     sfpartitioninvert = calloc(p, sizeof(mp_limb_t *));    //Tableau contenant les ensembles "inverses" de la partition
     sfpartitionbest = calloc(p, sizeof(mp_limb_t *));      //Tableau servant au niveau en-dessous
-    sfpartitionbestglobal = calloc(p, sizeof(mp_limb_t *));//Tableau gardant le meilleur résultat trouvé
     for (i=0; i<p; i++) {
-        sfpartition[i] = calloc(p, sizeof(mp_limb_t));
-        sfpartitioninvert[i] = calloc(p, sizeof(mp_limb_t));
-        sfpartitionbest[i] = calloc(p, sizeof(mp_limb_t));
-        sfpartitionbestglobal[i] = calloc(p, sizeof(mp_limb_t));
+        sfpartition[i] = calloc(limballoc, sizeof(mp_limb_t));
+        sfpartitioninvert[i] = calloc(limballoc, sizeof(mp_limb_t));
+        sfpartitionbest[i] = calloc(limballoc, sizeof(mp_limb_t));
     }
-    sfpartitionstruc.limballoc = p;
+    sfpartitionstruc.limballoc = limballoc;
     sfpartitionstruc.limbsize = 1;
     sfpartitionstruc.work0 = work0;
     sfpartitionstruc.work1 = work1;
@@ -413,14 +418,12 @@ unsigned long schurNumberSimpleNestedMonteCarlo(unsigned int p, unsigned int lev
         free(sfpartition[i]);
         free(sfpartitioninvert[i]);
         free(sfpartitionbest[i]);
-        free(sfpartitionbestglobal[i]);
     }
     free(sfpartition);
     free(sfpartitioninvert);
     free(sfpartitionbest);
-    free(sfpartitionbestglobal);
     free(work0);
     free(work1);
     
-    return nbest;
+    return nbest + 1;
 }
