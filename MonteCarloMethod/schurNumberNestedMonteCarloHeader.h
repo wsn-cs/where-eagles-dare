@@ -31,7 +31,6 @@ struct schur_partition_struct {
 typedef struct schur_partition_struct partition_t;
 
 /*Fonction ajoutant les entiers un par un*/
-unsigned long schurNumberSimpleMonteCarloLevelIteration(partition_t *sfpartitionstruc, unsigned int level,
-  mp_limb_t **sfpartitionbest, unsigned int *pbestptr, unsigned int iternum);
+unsigned long schurNumberSimpleNestedMonteCarlo(unsigned int p, unsigned int level, unsigned int simulnum, unsigned int simulnum0);
 
 #endif
