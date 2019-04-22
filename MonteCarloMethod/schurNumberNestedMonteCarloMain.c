@@ -2,7 +2,8 @@
 //  schurNumberNestedMonteCarloMain.c
 //  schurNumberMonteCarlo
 //
-//  Created by Weak Schur Number CS on 21/03/2019.
+//  Created by Weak Schur Number CS on 22/04/2019.
+//  Ce fichier contient la fonction main qui permet de construire un exécutable.
 //
 
 #include <stdio.h>
@@ -10,6 +11,7 @@
 #include <libgen.h>
 #include <string.h>
 #include <math.h>
+#include "schurNumberNestedMonteCarloHeader.h"
 
 void usage(char *cmdname) {
     fprintf(stderr,
