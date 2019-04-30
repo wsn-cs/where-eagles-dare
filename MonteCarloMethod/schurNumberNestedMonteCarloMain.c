@@ -69,7 +69,6 @@ int main(int argc, const char * argv[]) {
     iternum = 64;
     printpartition = 0;
     statistics = 0;
-    filename = NULL;
     
     while ((optc = getopt(argc, argv, "hpvl:s:i:")) != -1) {
         /*Parse arguments*/
