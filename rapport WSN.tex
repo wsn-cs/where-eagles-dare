@@ -3,10 +3,12 @@
 \usepackage[T1]{fontenc}
 \usepackage{hyperref}
 \usepackage{geometry} \geometry{hmargin=1.5cm,vmargin=1.5cm}
+\usepackage{tabto}
 
-\title{Weak Schur Numbers, 1ère version}
-\author{Benoît Ferté, Gabriel Merlin, Thomas Bianco, Mario Michelessa, Richard Abou Chaaya}
-\date{Avril 2019}
+\title{Where Eagles Dare : Etude des nombres faibles de Schur \\ Travail inter-atelier 2 \\ \\ Mathématiques et informatique théoriques}
+\author{Richard Abou Chaaya, Thomas Bianco, Benoît Ferté, Gabriel Merlin, Mario Michelessa \\ \\
+Encadrants : Joanna Tomasik, Arpad Rimmel}
+\date{17 Avril 2019}
 
 
 
@@ -20,16 +22,23 @@
 \tableofcontents
 \newpage
 
-\section{Description}
-Notre travail, encadré par Joanna Tomasik et Arpad Rimmel porte sur les nombre de Schur, un sujet se situant à la frontière entre algorithmique et théorie des nombres.
+\section{Contexte}
 
+En 1912, Issai Schur publie un article portant sur la question du "dernier théorème de Fermat" dans sa version modulo n : la question est de savoir si
 
-« Quel est le nombre minimal d’invités devant être présents à une soirée pour être sûr qu’au moins 3 personnes se connaissent ou qu’au moins 3 ne se connaissent pas ? » 
-L’étude des questions de cette forme ( « combien d'éléments d'une certaine structure doivent être considérés pour qu'une propriété particulière se vérifie ? » ) est appelée théorie de Ramsey. 
+\begin{center}
 
+$\forall \ k, \ \exists \ x,y,z \ tels \ que \ x^k + y^k \equiv z^k \ mod \ n $
 
-Dans ce cadre, nous considérons la question suivante : « Combien de nombres entiers consécutifs doit-on considérer pour être sûr que toute coloration de ces entiers contient un triplet monochromatique a, b, c vérifiant a+b=c ?». Ce nombre est appelé nombre de Schur et a été initialement introduit pour réfuter la version « modulo p » du dernier problème de Fermat. 
+\end{center}
 
+Pour montrer ce résultat, Schur démontre un théorème qui portera son nom, et qui s'énonce ainsi : si l'on colore avec un nombre fini de couleurs les entiers de 1 à n, il existera x,y,z de la même couleur tels que $x + y = z$.
+\\
+La question qui se pose alors est : pour un nombre fixé k de couleurs, combien d'entiers successifs peut-on colorer sans qu'il existe 3 entiers de même couleur satisfaisants cette propriété ? On dira alors de l'ensemble formé par les nombres d'une même couleur qu'il est sans somme.
+\\
+Cette question s'inscrit dans le cadre plus large de la théorie de Ramsey, une branche de la combinatoire qui tente de répondre à des questions de la forme "à partir de quelle taille minimale une structure donnée vérifie-t-elle nécessairement une propriété choisie ?"
+\\
+Le nombre maximum d'entiers pouvant être colorés par k couleurs sans somme sera appelé nombre de Schur de k, ou $S(k)$. On va définir plus rigoureusement $S(k)$.
 
 \section{Description mathématique}
 On appelle nombre de Schur, noté $S(k)$, le plus grand entier N tel que :
@@ -44,7 +53,7 @@ $\forall i\in \{1,k\} \not\exists \ a,b,c\in A_i \ tels \  que \ a+b=c  $
 \end{center}
 Dans le cas où $a \neq b$, on appellera N nombre de Schur faible, noté WS(k).
 \\
-On connait actuellement les nombres de Schur jusqu'à 5, et les nombres de Schur faibles jusqu'à 4. Pour les valeurs supérieures, on ne connait que des bornes, supérieures et inférieures. L'enjeu de ce projet est de parvenir à améliorer ces bornes.
+On connait actuellement les valeurs exactes des nombres de Schur jusqu'à $k = 5$, et les nombres de Schur faibles jusqu'à $k = 4$. Au-delà, on ne connait que des bornes, supérieures et inférieures. L'enjeu de ce projet est de parvenir à améliorer ces bornes. Il est très difficile d'obtenir les valeurs exactes des nombres de Schur. En effet, pour prouver une borne inférieure, il suffit d'exhiber une partition correspondante. Mais pour prouver une valeur exacte de S(k), il faut montrer que toutes les partitions des S(k) + 1 premiers entiers en k ensembles comportent un ensemble avec somme : la recherche exhaustive devient très vite impossible en termes de temps de calcul.
 \\
 
 
@@ -62,27 +71,86 @@ On connait actuellement les nombres de Schur jusqu'à 5, et les nombres de Schur
     atteinte &  &  &  &  &  &  &  &  &  &  &  &  \\ \hline
     
 \end{tabular}
+\\
 
 Les bornes supérieures viennent de [9] et [10]
+
+\section{Pistes et ressources}
+
+On peut aborder le problème selon deux angles : plutôt informatique, en cherchant des heuristiques qui amélioreraient les bornes inférieures de l'état de l'art, ou plutôt mathématique, en cherchant des formules générales sur les nombres de Schur ou en trouvant des constructions systématiques de partitions.
+\\
+Pour le premier aspect, nous avons choisi de nous intéresser d'abord à l'article de B. Bouzy qui décrit une heuristique utilisant l'algorithme de Nested Monte-Carlo pour créer des partitions sans-somme à partir de partitions plus petites. Un premier objectif est d'implémenter son algorithme, puis de le modifier grâce à des idées trouvées dans le reste de la bibliographie pour concevoir une heuristique plus performante.
+\\
+Pour le deuxième aspect, nous nous sommes penchés sur l'article d'Abbot-Hanson [7] qui prouve une relation récursive sur les nombres de Schur. Dans un premier temps, nous avons compris les démonstrations de l'article, le nouvel objectif est de l'utiliser pour construire réellement les partitions correspondant aux bornes inférieures obtenues grâce aux formules.
 
 \section{Planning}
 
 Divers articles seront étudiés tout au long du projet.
 \\ En parallèle, des codes seront implémentés pour tenter de trouver des bornes les plus hautes possibles.
-\\ L'objectif à court terme est de réussir à implanter l'algorithme de Nested Monte-Carlo 
+\\ Les prochaines étapes sont l'étude des résultats obtenus avec l'algorithme de Nested Monte-Carl et de la faisabilité d'un algorithme basé sur la preuve du théorème de Abbott-Hanson 
 
 \section{Avancement}
 
-Articles lus (et compris) : 
+\subsection{Articles lus}
+\subsubsection{An abstract procedure to compute weak Schur numbers, B.Bouzy}
+Une bonne solution de $WS(n+1)$ semble contenir une bonne solution de $WS(n)$. De plus, on remarque que les bonnes solutions contiennent des suites de nombres presque consécutifs. On exécute donc un algorithme récursif de la façon suivante:
 \begin{itemize}
-    \item An abstract procedure to compute weak Schur numbers, B.Bouzy
-    \item Lower bounds for S(n), Abbott et Hanson
+    \item On trouve une bonne partition de $WS(n-1)$
+    \item On ajoute une suite de nombres presque consécutifs dans k-ième colonne (environ $2WS(n-1)$ nombres)
+    \item On remplit les k-1 premières colonnes avec une bnne solution
 \end{itemize}
-Codes réalisés : 
+On peut optimiser cet algorithme en recherchant des trous spécifiques dans les suites de nombres, qui permettent de mettre plus de nombres par la suite, et en calculant une solution exacte pour $k=3$ avant de lancer la récurrence.
+\\ On peut également adapter cet algorithme pour pouvoir utiliser l'algorithme de Monte-Carlo.
+
+
+\subsubsection{Lower bounds for $S(n)$, Abbott et Hanson}
+On généralise le problème de Schur, le problème devient :
+\\ Soient $a_1, a_2... a_N \in \mathbb{Z}$. Trouver $f(m)$, le plus grand entier tel qu'il existe une m-partition de \{1,f(m)\} pour laquelle, dans chaque sous-espace, il n'existe pas $x_1, x_2... x_N$ vérifiant :
+\begin{center}
+    $\sum a_i x_i = 0$
+\end{center}
+\\ Schur correspond au cas où $a_1=a_2=1$ et $a_3=-1$ 
+\\Notations :
 \begin{itemize}
-    \item Monte-Carlo naïf
-    \item nested Monte-Carlo (à debugger)
+    \item $A=\sum_{i=1}^{t}a_i > B=\sum{i=t+1}^{N}a_i$
+    \item M,N entiers tels que:
+    \\ \tabto{1cm} $(A-1)f(m) \leq M<N$
+    \\ \tabto{1cm} $1 \leq N \leq \{ \frac{A}{A-1}M \} $
+    \item $ \mu = -B+1, -B+2...A-1 $ si $N< \frac{A}{A-1}M $
+    \\ $ \mu = -B+1, -B+2...A-2 $ sinon
+    \item H(M,N) est le plus petit nombre permaetant de partitionner [1,N] en évitant :
+    \\  \tabto{1cm} $ \sum_{i=1}^{t}a_ix_i = \sum{i=t+1}^{N}a_ix_i + \mu N $
+    \item $ h(M) = min H(M,N) = H(M_1,N_1) $ avec M,N vérifiant les hypothèses précédentes
 \end{itemize}
+Alors on a :
+\begin{center}
+    $f(n+h(m)) \geq N_1 f(n) + f(m)$
+\end{center}
+De plus, on a également :
+\begin{center}
+   $ f(m+n) \geq (2f(m)+1)f(n) + f(m) $
+\end{center}
+ce qui, appliqué à Schur, donne:
+\begin{center}
+   $ S(m+n) \geq (2S(m)+1)S(n) + S(m) $
+\end{center}
+De plus, la preuve de ces théorème est constructive, et fournit une piste intéressante pour développer de nouveaux algorithmes.
+
+
+\subsection{Codes réalisés} 
+Une représentation intéressante des éléments d'une partition est de les considérer comme un tableau de booléens, le i-ème nombre valant 1 si i est présent dans la partition. Cela permet de vérifier très rapidement si un nombre peut être ajouté dans une partition en respectant la propriété sum-free.
+\subsubsection{algorithme exhaustif}
+Dès n=4, l'algorithme prend trop de temps pour s'exécuter.
+\subsubsection{nested Monte-Carlo}
+Le code a été mis sous forme d'un exécutable avec quatre paramètres : 
+\begin{itemize}
+    \item le nombre d'ensembles de la partition
+    \item le niveau
+    \item le nombre d’iterations au niveau 0
+    \item le nombre de simulation de haut niveau
+\end{itemize}
+ L'algorithme renvoie la meilleure partition sans-somme trouvée ainsi que l'écart-type et la moyenne des partitions optimales générées au plus haut niveau. 
+ \\ La moyenne augmente globalement lorsque le niveau ou le nombre d’iterations augmente, tandis que l'écart type diminue. Les performances augmentent plus avec le niveau qu'avec le nombre d’iterations.
 
 \section{Annexes}
 Des slides, supports pour une présentation orale, ont été réalisées à chaque séance.
@@ -114,4 +182,5 @@ Des slides, supports pour une présentation orale, ont été réalisées à chaq
 
 
 \end{document}
+
 
