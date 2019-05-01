@@ -138,7 +138,11 @@ unsigned long schurNumberSimpleMonteCarloLevelIteration(partition_t *sfpartition
             }
             
             /* Sélectionner une huche aléatoirement parmi 0,…,prand-1*/
+            #ifdef arc4random_uniform
             i = arc4random_uniform(prand);
+            #else
+            i = rand()%prand;
+            #endif
             
             /*Tester si il est possible de mettre n+1 dans la huche i.*/
             mpn_copyd(work0, sfpartitioninvert[i] + limballoc - wlimbsize, wlimbsize);
