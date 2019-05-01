@@ -16,6 +16,7 @@
 void usage(char *cmdname) {
     fprintf(stderr,
             "usage: %s [-h] [-pv] [-l level] [-s simulnum] [-i iternum] partnumber\n"\
+            "\t-b filename : Specify a filename for an initial partition\n"\
             "\t-p : Print the found partition to stdout.\n"\
             "\t-v : Print mean and standard deviation to stdout.\n"\
             "\t-l level: Specify the nesting level. By default level = 1.\n"\
@@ -61,7 +62,10 @@ int main(int argc, const char * argv[]) {
     unsigned long *narray;
     unsigned long nmax;
     double nmean, nvar, delta;
+    char *filename;
     mp_limb_t **sfpartitionbestglobal;
+    partition_t partitionbeginstruc;
+    partition_t *partitionbeginptr;
     
     /*Set variables to default*/
     level = 1;
@@ -69,10 +73,16 @@ int main(int argc, const char * argv[]) {
     iternum = 64;
     printpartition = 0;
     statistics = 0;
+    filename = NULL;
+    partitionbeginptr = NULL;
     
     while ((optc = getopt(argc, argv, "hpvl:s:i:")) != -1) {
         /*Parse arguments*/
         switch (optc) {
+                
+            case 'b':
+                asprintf(&filename, "%s", optarg);
+                break;
                 
             case 'h':
                 usage(argv[0]);
@@ -124,7 +134,13 @@ int main(int argc, const char * argv[]) {
         sfpartitionbestglobal[i] = calloc(p, sizeof(mp_limb_t));
     }
     
-    nmax = schurNumberSimpleNestedMonteCarlo(p, narray, level, simulnum, iternum, sfpartitionbestglobal);
+    if (filename) {
+        /*Débuter à partir d'une partition contenue dans le fichier filename.*/
+        schurNumberScanPartitionFromFile(filename, &partitionbeginstruc);
+        partitionbeginptr = &partitionbeginstruc;
+    }
+    
+    nmax = schurNumberSimpleNestedMonteCarlo(p, narray, level, simulnum, iternum, sfpartitionbestglobal, partitionbeginptr);
     
     printf("Schur Number S(%u) ≥ %lu\n", p, nmax);
     
@@ -152,6 +168,17 @@ int main(int argc, const char * argv[]) {
         free(sfpartitionbestglobal[i]);
     }
     free(sfpartitionbestglobal);
+    
+    if (filename) {
+        /*Déallocation de la partition initiale*/
+        p = partitionbeginstruc.p;
+        for (i=0; i<p; i++) {
+            free(partitionbeginstruc.partition[i]);
+            free(partitionbeginstruc.partitioninvert[i]);
+        }
+        free(partitionbeginstruc.partition);
+        free(partitionbeginstruc.partitioninvert);
+    }
     
     return 0;
 }
