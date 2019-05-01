@@ -150,16 +150,15 @@ int main(int argc, const char * argv[]) {
     }
     
     if (statistics) {
-        /*Calculer la valeur moyenne et l'écart-type.*/
+        /*Calculer la valeur moyenne et l'écart-type grâce à la méthode de Welford.*/
         nmean = 0;
         nvar = 0;
         for (i=0; i < simulnum; i++) {
-            delta = ((double)narray[i] - nmean);
-            nmean += (double)narray[i];
+            delta = (double)narray[i] - nmean;
+            nmean += delta/(i+1);
             nvar += delta * ((double)narray[i] - nmean);
         }
-        nmean = nmean / simulnum;
-        nvar = nvar / simulnum;
+        nvar = nvar / (simulnum-1);
         printf("Moyenne : %f\nEcart-type : %f\n", nmean, sqrt(nvar));
     }
     
