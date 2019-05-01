@@ -7,6 +7,7 @@
 //
 
 #include <stdio.h>
+#include <stdarg.h>
 #include <unistd.h>
 #include <libgen.h>
 #include <string.h>
