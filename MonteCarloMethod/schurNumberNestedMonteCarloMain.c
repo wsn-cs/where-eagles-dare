@@ -144,7 +144,7 @@ int main(int argc, const char * argv[]) {
         }
         nmean = nmean / simulnum;
         nvar = nvar / simulnum;
-        printf("Moyenne : %d\nEcart-type : %d\n", nmean, sqrt(nvar));
+        printf("Moyenne : %f\nEcart-type : %f\n", nmean, sqrt(nvar));
     }
     
     free(narray);
