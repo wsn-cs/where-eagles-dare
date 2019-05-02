@@ -226,7 +226,7 @@ unsigned long schurNumberSimpleMonteCarloLevelIteration(partition_t *sfpartition
         
         for (i=0; i<p; i++) {
             /*Tester si il est possible d'ajouter n+1 à la huche i*/
-            mpn_copyd(work0, sfpartitioninvert[i]t + limballoc - wlimbsize, wlimbsize);
+            mpn_copyd(work0, sfpartitioninvert[i] + limballoc - wlimbsize, wlimbsize);
             mpn_rshift(work1, work0, wlimbsize, shift);
             mpn_and_n(work0, sfpartition[i], work1, wlimbsize);
             isSumFree = mpn_zero_p(work0, wlimbsize);
