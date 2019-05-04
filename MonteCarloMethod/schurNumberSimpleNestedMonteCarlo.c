@@ -414,7 +414,7 @@ unsigned long schurNumberSimpleNestedMonteCarlo(unsigned int p, unsigned long *n
         
         /*Lancement de la simulation de niveau level*/
         nsimulated = schurNumberSimpleMonteCarloLevelIteration(&sfpartitionstruc, level, sfpartitionbest, &pbest, iternum);
-        narray[i] = nsimulated;
+        narray[i] = nsimulated + 1;
         if (nsimulated > nbest) {
             nbest = nsimulated;
             for (j=0; j<pbest; j++) {
