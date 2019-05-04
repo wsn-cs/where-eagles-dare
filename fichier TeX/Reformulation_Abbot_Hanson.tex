@@ -1,0 +1,95 @@
+% !TEX encoding = UTF-8 Unicode
+\documentclass[11pt, oneside]{article}
+\usepackage{geometry}
+\geometry{letterpaper}                   		% ... or a4paper or a5paper or ... 	
+\usepackage{amssymb}
+\usepackage[utf8]{inputenc}
+
+%SetFonts
+
+%SetFonts
+
+\newtheorem{theoreme}{Théorème}
+
+\title{Reformulation d'Abbot-Hanson}
+\author{Richard Abou Chaaya, Thomas Bianco, Benoît Ferté, Gabriel Merlin, Mario Michelessa \\ \\
+Encadrants : Joanna Tomasik, Arpad Rimmel}
+\date{}
+
+\begin{document}
+\maketitle
+
+Ce document propose une reformulation du théorème 2.1 de \cite{AbbotHanson} dans le cas particulier des nombres de Schur,
+en partant de deux partitions sans-sommes quelconques.
+
+\begin{theoreme}
+Soient $p$ et $q$ deux entiers naturels; $S(p + q) \geqslant 2 S(p) S(q) + S(p) + S(q).$
+\end{theoreme}
+
+Pour prouver ce résultat, nous allons partir de deux partitions sans-sommes quelconques $(\mathrm{P}_i)_{1 \leqslant i \leqslant p}$
+et $(\mathrm{Q}_i)_{1 \leqslant j \leqslant q}$, respectivement à $p$ et $q$ ensembles.
+Notons $m$ et $n$ les entiers tels que $\{1, \dots, m\} = \mathrm{P}_1 \cup \dots \cup \mathrm{P}_p$
+et $\{1, \dots, n\} = \mathrm{Q}_1 \cup \dots \cup \mathrm{Q}_q$.
+Nous allons construire une partition sans-somme de $\{1, \dots, nN + m\}$ à $p+q$ ensembles à partir de ces deux partitions,
+où $N \geqslant m + 1$ est un entier, que nous devrons prendre dans $\{2m, 2m+1\}$ pour que cela puisse marcher.
+
+Comme dans Abbot-Hanson, définissons deux ensembles $\mathrm{A}$ et $\mathrm{B}$~:
+\begin{equation}
+ \mathrm{A} = \{ bN + c, 0 \leqslant b \leqslant n, 1 \leqslant c \leqslant m \}
+\end{equation}
+et
+\begin{equation}
+ \mathrm{B} = \{ bN - c, 1 \leqslant b \leqslant n, 0 \leqslant c \leqslant N-m-1 \}.
+\end{equation}
+Lorque l'on pose $c' = N - c$ et $b' = b-1$ dans la définition de $\mathrm{B}$, celle-ci se réécrit
+\[ \mathrm{B} = \{ b'N + c', 0 \leqslant b' \leqslant n-1, m+1 \leqslant c' \leqslant N \}. \]
+Cette réécriture souligne le fait que l'intervalle $\{1, \dots, nN + m \}$ est partitionné selon les restes pour la division euclidienne par $N$~:
+si $x \in \{1, \dots, nN + m \}$ a un reste compris entre $1$ et $m$, alors $x \in \mathrm{A}$;
+sinon, si $x$ a un reste appartenant à $\{0\} \cup \{m+1, \dots, N-1\}$, alors $x \in \mathrm{B}$.
+
+Construisons maintenant une partition sans-somme $(\mathrm{R}_k)$ de $\{1, \dots, nN + m \}$ à $p+q$ ensembles en suivant Abbot-Hanson.
+Quelque soit $i \in \{1, \dots, p\}$, soit $\mathrm{R}_i$ l'ensemble des éléments $bN + c$ de $\mathrm{A}$ tels que $c \in \mathrm{P}_i$,
+et quelque soit $j \in \{1, \dots, q\}$, soit $\mathrm{R}_{p + j}$ l'ensemble des éléments $bN - c$ de $\mathrm{B}$ tels que $b \in \mathrm{Q}_j$.
+Par construction, $(\mathrm{R}_k)_{1 \leqslant k \leqslant p+q}$ constitue une partition de $\{1, \dots, nN + m \}$.
+
+Trouvons d'abord une condition sur $N$ pour que les ensembles $\mathrm{R}_i$, $1 \leqslant i \leqslant p$, soient sans-sommes.
+Si jamais il existait trois éléments $b_1 N + c_1$, $b_2 N + c_2$, $b_3 N + c_3$ appartenant à un même $\mathrm{R}_i$, tels que
+\begin{equation}
+ (b_1 N + c_1) + (b_2 N + c_2) = b_3 N + c_3,
+\end{equation}
+alors
+\begin{equation}
+ c_3 - c_2 - c_1 = (b_1 + b_2 - b_3)N,
+\end{equation}
+donc $N$ diviserait $c_3 - c_2 - c_1$. Par ailleurs,
+\begin{equation}
+ -(2m - 1) \leqslant c_3 - c_2 - c_1 \leqslant m-2,
+\end{equation}
+donc si l'on impose $N > 2m - 1$, la seule manière que $N$ divise $c_3 - c_2 - c_1$ est que $c_3 - c_2 - c_1 = 0$,
+contredisant le caractère sans-somme de $\mathrm{P}_i$.
+
+Trouvons ensuite une nouvelle condition sur $N$ contraignant les $\mathrm{R}_{p + j}$, $1 \leqslant j \leqslant q$ à être sans-sommes.
+Supposons à nouveau qu'il puisse exister trois éléments $b_1 N - c_1$, $b_2 N - c_2$, $b_3 N - c_3$ appartenant à un $\mathrm{R}_{p + j}$
+tels que $(b_1 N - c_1) + (b_2 N - c_2) = b_3 N - c_3,$ d'où
+\begin{equation}
+ c_3 - c_2 - c_1 = (b_3 - b_2 - b_1)N.
+\end{equation}
+Comme
+\begin{equation}
+ -2(N -m -1) \leqslant c_3 - c_2 - c_1 \leqslant N -m -1,
+\end{equation}
+imposer $N > 2(N -m -1)$ garantirait $c_3 - c_2 - c_1 = 0$,
+entraînant aussi $b_3 - b_2 - b_1 = 0$ ce qui serait absurde.
+Ainsi, la condition $N > 2(N -m -1)$, qui équivaut à $N < 2m + 2$, force les $\mathrm{R}_{p + j}$ à être sans-sommes.
+
+Quand les deux conditions sont regroupées, il vient finalement $N \in \{2m, 2m+1\}$.
+
+Pour obtenir l'inégalité annoncée, il suffit de prendre $m = S(p)$ et $n = S(q)$~:
+une partition sans-somme de $\{1, \dots, S(p)(2S(q)+1) + S(q) \}$ à $p+q$ éléments ayant été construite, $S(p+q) \geqslant S(p)(2S(q)+1) + S(q)$.
+
+\begin{thebibliography}{1}
+ \bibitem{AbbotHanson}
+  H. L. Abbot, D. Hanson, \textit{A problem of Schur and its generalizations}, Acta Arithmetica, XX (1972), pp. 175-187
+\end{thebibliography}
+
+\end{document}
