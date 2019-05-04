@@ -67,7 +67,6 @@ unsigned long schurNumberIterWithUnstack(unsigned long pmax, unsigned long *nbes
     char isAppendable;  //Vrai si il est possible de former une partition sans-somme contenant n
     mp_limb_t *work0;
     mp_limb_t *work1;
-    mp_limb_t *set;
     mp_limb_t **sfpartition;
     mp_limb_t **sfpartitioninvert;
     mp_size_t limballoc;    // Nombre de limbes alloué à chaque ensemble de sfpartition et à work0 et work1
@@ -110,10 +109,8 @@ unsigned long schurNumberIterWithUnstack(unsigned long pmax, unsigned long *nbes
         while (i < p) {
             // Tester si l'ensemble obtenu en ajoutant n à la huche i est sans-somme
             mpz_add_ui(iternum, iternum, 1);
-            set = sfpartitioninvert[i];
-            mpn_rshift(work1, &set[limballoc - wlimbsize], wlimbsize, shift);
-            set = sfpartition[i];
-            mpn_and_n(work0, set, work1, wlimbsize);
+            mpn_rshift(work1, sfpartitioninvert[i] + limballoc - limbsize, limbsize, shift);
+            mpn_and_n(work0, sfpartition[i], work1, wlimbsize);
             isSumFree = mpn_zero_p(work0, wlimbsize);
             if (isSumFree) {
                 // Ajouter n+1 à la huche i
