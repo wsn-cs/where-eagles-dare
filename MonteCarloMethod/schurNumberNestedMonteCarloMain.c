@@ -228,6 +228,7 @@ int main(int argc, const char * argv[]) {
             n--;
         }
         fclose(ofileptr);
+        free(ofilename);
     }
     
     /*Déallocation des variables.*/
@@ -246,6 +247,7 @@ int main(int argc, const char * argv[]) {
         }
         free(partitionbeginstruc.partition);
         free(partitionbeginstruc.partitioninvert);
+        free(bfilename);
     }
     
     return 0;
