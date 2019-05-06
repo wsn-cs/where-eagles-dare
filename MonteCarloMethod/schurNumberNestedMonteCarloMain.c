@@ -18,6 +18,7 @@ void usage(char *cmdname) {
     fprintf(stderr,
             "usage: %s [-h] [-pv] [-l level] [-s simulnum] [-i iternum] partnumber\n"\
             "\t-b filename : Specify a filename for an initial partition\n"\
+            "\t-o filename : Create a file named filename where to save the generated numbers.\n"\
             "\t-p : Print the found partition to stdout.\n"\
             "\t-v : Print mean and standard deviation to stdout.\n"\
             "\t-l level: Specify the nesting level. By default level = 1.\n"\
@@ -98,7 +99,9 @@ int main(int argc, const char * argv[]) {
     unsigned long *narray;
     unsigned long nmax;
     double nmean, nvar, delta;
-    char *filename;
+    char *bfilename;
+    char *ofilename;
+    FILE *ofileptr;
     mp_limb_t **sfpartitionbestglobal;
     partition_t partitionbeginstruc;
     partition_t *partitionbeginptr;
@@ -109,15 +112,20 @@ int main(int argc, const char * argv[]) {
     iternum = 64;
     printpartition = 0;
     statistics = 0;
-    filename = NULL;
+    bfilename = NULL;
+    ofilename = NULL;
     partitionbeginptr = NULL;
     
-    while ((optc = getopt(argc, argv, "hpvl:s:i:")) != -1) {
+    while ((optc = getopt(argc, argv, "hpvl:s:i:b:o:")) != -1) {
         /*Parse arguments*/
         switch (optc) {
                 
             case 'b':
-                asprintf(&filename, "%s", optarg);
+                asprintf(&bfilename, "%s", optarg);
+                break;
+                
+            case 'o':
+                asprintf(&ofilename, "%s", optarg);
                 break;
                 
             case 'h':
@@ -164,13 +172,14 @@ int main(int argc, const char * argv[]) {
         return 0;
     }
     
+    /*Allocation des variables.*/
     narray = calloc(simulnum, sizeof(unsigned long));
-    sfpartitionbestglobal = calloc(p, sizeof(mp_limb_t *));
+    sfpartitionbestglobal = calloc(p, sizeof(mp_limb_t *)); //Contiendra la plus grande partition sans-somme trouvée.
     for (i=0; i<p; i++) {
         sfpartitionbestglobal[i] = calloc(p, sizeof(mp_limb_t));
     }
     
-    if (filename) {
+    if (bfilename) {
         /*Débuter à partir d'une partition contenue dans le fichier filename.*/
         schurNumberScanPartitionFromFile(filename, &partitionbeginstruc);
         partitionbeginptr = &partitionbeginstruc;
@@ -181,7 +190,7 @@ int main(int argc, const char * argv[]) {
     printf("Schur Number S(%u) ≥ %lu\n", p, nmax);
     
     if (printpartition) {
-        /*Afficher la meilleure partition trouvée.*/
+        /*Afficher la meilleure partition sans-somme trouvée.*/
         printPartition(p, nmax, sfpartitionbestglobal);
     }
     
@@ -198,13 +207,37 @@ int main(int argc, const char * argv[]) {
         printf("Moyenne : %f\nEcart-type : %f\n", nmean, sqrt(nvar));
     }
     
+    if (ofilename) {
+        /*Placer les entiers de narray dans un fichier au format tsv.
+         Le format est entier_n\tnombre_d'occurences\n.*/
+        ofileptr = fopen(ofilename, "w");
+        n = nmax;
+        total = 0;
+        while (total < simulnum) {
+            count = 0;  // Compte le nombre de fois qu'une partition de [1, n] a été obtenue
+            for (i=0; i<simulnum; i++) {
+                if (narray[i] == n) {
+                    count++;
+                    total++;
+                }
+            }
+            if (count) {
+                /*Au moins une partition sans-somme de [1, n] a été obtenue.*/
+                fprintf(ofileptr, "%lu\t%lu\r\n", n, count);
+            }
+            n--;
+        }
+        fclose(ofileptr);
+    }
+    
+    /*Déallocation des variables.*/
     free(narray);
     for (i=0; i<p; i++) {
         free(sfpartitionbestglobal[i]);
     }
     free(sfpartitionbestglobal);
     
-    if (filename) {
+    if (bfilename) {
         /*Déallocation de la partition initiale*/
         p = partitionbeginstruc.p;
         for (i=0; i<p; i++) {
