@@ -314,7 +314,7 @@ unsigned long schurNumberSimpleMonteCarloLevelIteration(partition_t *sfpartition
         if (nbest > n) {
             /*Déterminer i correspondant à la meilleure partition obtenue à ce niveau.*/
             i = 0;
-            while (!(sfpartitionbest[i][limbsize - 1] & (1<<nmodbpl))) {
+            while (!(sfpartitionbest[i][limbsize - 1] & ((mp_limb_t)1<<nmodbpl))) {
                 i++;
             }
             /* Ajouter définitivement n+1 à la partition */
