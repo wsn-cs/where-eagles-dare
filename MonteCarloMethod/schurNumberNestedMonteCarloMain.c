@@ -173,17 +173,28 @@ int main(int argc, const char * argv[]) {
         return 0;
     }
     
+    
+    if (bfilename) {
+        /*Débuter à partir d'une partition contenue dans le fichier filename.*/
+        schurNumberScanPartitionFromFile(bfilename, &partitionbeginstruc);
+        if (!i) {
+            fprintf(stderr, "%s: unable to open file %s.\n", basename(argv[0]), bfilename);
+            free(bfilename);
+            return 0;
+        }
+        if (i < p) {
+            fprintf(stderr, "%s: the partition in file %s contains more sets (%u sets) than specified (%u sets). Unable to do any computations.\n", basename(argv[0]), bfilename, i, p);
+            free(bfilename);
+            return 0;
+        }
+        partitionbeginptr = &partitionbeginstruc;
+    }
+    
     /*Allocation des variables.*/
     narray = calloc(simulnum, sizeof(unsigned long));
     sfpartitionbestglobal = calloc(p, sizeof(mp_limb_t *)); //Contiendra la plus grande partition sans-somme trouvée.
     for (i=0; i<p; i++) {
         sfpartitionbestglobal[i] = calloc(p, sizeof(mp_limb_t));
-    }
-    
-    if (bfilename) {
-        /*Débuter à partir d'une partition contenue dans le fichier filename.*/
-        schurNumberScanPartitionFromFile(bfilename, &partitionbeginstruc);
-        partitionbeginptr = &partitionbeginstruc;
     }
     
     nmax = schurNumberSimpleNestedMonteCarlo(p, narray, level, simulnum, iternum, sfpartitionbestglobal, partitionbeginptr);
@@ -212,7 +223,7 @@ int main(int argc, const char * argv[]) {
         /*Placer les entiers de narray dans un fichier au format tsv.
          Le format est entier_n\tnombre_d'occurences\n.*/
         ofileptr = fopen(ofilename, "w");
-        if (!ofileptr) {
+        if (ofileptr) {
             n = nmax;
             total = 0;
             while (total < simulnum) {
