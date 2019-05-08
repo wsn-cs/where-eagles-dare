@@ -32,7 +32,7 @@ typedef struct schur_partition_struct partition_t;
 
 /*Fonctions d'affichage*/
 void printPartition(unsigned long p, unsigned long n, mp_limb_t **partition);
-void schurNumberScanPartitionFromFile(char *filename, partition_t *partitionstruc);
+unsigned long schurNumberScanPartitionFromFile(char *filename, partition_t *partitionstruc);
 
 /*Fonction ajoutant les entiers un par un*/
 unsigned long schurNumberSimpleNestedMonteCarlo(unsigned int p, unsigned long *narray, unsigned int level,
