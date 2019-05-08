@@ -97,7 +97,8 @@ int main(int argc, const char * argv[]) {
     char printpartition;
     char statistics;
     unsigned long *narray;
-    unsigned long nmax;
+    unsigned long n, nmax;
+    unsigned long count, total;
     double nmean, nvar, delta;
     char *bfilename;
     char *ofilename;
@@ -181,7 +182,7 @@ int main(int argc, const char * argv[]) {
     
     if (bfilename) {
         /*Débuter à partir d'une partition contenue dans le fichier filename.*/
-        schurNumberScanPartitionFromFile(filename, &partitionbeginstruc);
+        schurNumberScanPartitionFromFile(bfilename, &partitionbeginstruc);
         partitionbeginptr = &partitionbeginstruc;
     }
     
@@ -211,23 +212,27 @@ int main(int argc, const char * argv[]) {
         /*Placer les entiers de narray dans un fichier au format tsv.
          Le format est entier_n\tnombre_d'occurences\n.*/
         ofileptr = fopen(ofilename, "w");
-        n = nmax;
-        total = 0;
-        while (total < simulnum) {
-            count = 0;  // Compte le nombre de fois qu'une partition de [1, n] a été obtenue
-            for (i=0; i<simulnum; i++) {
-                if (narray[i] == n) {
-                    count++;
-                    total++;
+        if (!ofileptr) {
+            n = nmax;
+            total = 0;
+            while (total < simulnum) {
+                count = 0;  // Compte le nombre de fois qu'une partition de [1, n] a été obtenue
+                for (i=0; i<simulnum; i++) {
+                    if (narray[i] == n) {
+                        count++;
+                        total++;
+                    }
                 }
+                if (count) {
+                    /*Au moins une partition sans-somme de [1, n] a été obtenue.*/
+                    fprintf(ofileptr, "%lu\t%lu\r\n", n, count);
+                }
+                n--;
             }
-            if (count) {
-                /*Au moins une partition sans-somme de [1, n] a été obtenue.*/
-                fprintf(ofileptr, "%lu\t%lu\r\n", n, count);
-            }
-            n--;
+            fclose(ofileptr);
+        } else {
+            fprintf(stderr, "%s: unable to write in %s.\n", basename(argv[0]), ofilename);
         }
-        fclose(ofileptr);
         free(ofilename);
     }
     
