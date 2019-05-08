@@ -8,10 +8,11 @@
 #include <stdio.h>
 #include "schurNumberNestedMonteCarloHeader.h"
 
-void schurNumberScanPartitionFromFile(char *filename, partition_t *partitionstruc) {
+unsigned long schurNumberScanPartitionFromFile(char *filename, partition_t *partitionstruc) {
     /*Crée une partition à partir d'un fichier texte.
      Des virgules séparent les entiers au sein d'un même ensemble
-     et des points séparent les ensembles entre eux.*/
+     et des points séparent les ensembles entre eux.
+     La fonction renvoie le nombre d'ensembles p de la partition, ou 0 si un problème survient.*/
     FILE *fp;
     int c;
     char *intstr;
@@ -26,6 +27,11 @@ void schurNumberScanPartitionFromFile(char *filename, partition_t *partitionstru
     
     /*Ouverture du flux*/
     fp = fopen(filename, "r");
+    
+    if (!fp) {
+        /*Le fichier ne peut être ouvert.*/
+        return 0;
+    }
     
     /*Lecture préliminaire comptant les virgules et les points*/
     p = 1;
@@ -119,4 +125,6 @@ void schurNumberScanPartitionFromFile(char *filename, partition_t *partitionstru
     
     /*Fermeture du flux*/
     fclose(fp);
+    
+    return p;
 }
