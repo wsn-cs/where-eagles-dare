@@ -126,3 +126,47 @@ void partition_unalloc(partition_t *partitionstruc) {
     free(partitionstruc->work0);
     free(partitionstruc->work1);
 }
+
+
+void partition_copy(partition_t *partitionstrucd, partition_t *partitionstrucs) {
+    /*Copier partitionstrucs dans partitionstrucs.*/
+    unsigned int pmax;
+    unsigned int p;
+    unsigned int i;
+    mp_size_t limballoc;
+    mp_size_t limbsize;
+    mp_size_t limballocs;
+    mp_limb_t *sets, *setd;
+    mp_limb_t *setinverts, *setinvertd;
+    
+    pmax = partitionstrucd->pmax;
+    limballoc = partitionstrucd->limballoc;
+    
+    p = partitionstrucs->p;
+    limballocs = partitionstrucs->limballoc;
+    limbsize = partitionstrucs->limbsize;
+    
+    if (p > pmax || limbsize > limballoc) {
+        /*Augmenter la taile de partitionstrucd.
+         A faire*/
+    }
+    
+    sets = *(partitionstrucs->partition);
+    setinverts = *(partitionstrucs->partitioninvert);
+    setd = *(partitionstrucd->partition);
+    setinvertd = *(partitionstrucd->partitioninvert);
+    for (i=0; i<p; i++) {
+        mpn_zero(setd, limballoc);
+        mpn_zero(setinvertd, limballoc);
+        mpn_copyd(setd, sets, limbsize);
+        mpn_copyd(setinvertd + limballoc - limbsize, setinverts + limballocs - limbsize, limbsize);
+        sets++;
+        setd++;
+        setinverts++;
+        setinvertd++;
+    }
+    
+    partitionstrucd->p = p;
+    partitionstrucd->n = partitionstrucs->n;
+    partitionstrucd->limbsize = limbsize;
+}
