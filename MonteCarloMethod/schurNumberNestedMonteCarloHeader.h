@@ -30,6 +30,11 @@ struct schur_partition_struct {
 
 typedef struct schur_partition_struct partition_t;
 
+/*Fonctions d'initialisation, de réallocation et de libération*/
+void partition_init(unsigned int pmax, unsigned long nmax, partition_t *partitionstruc);
+void partition_realloc(partition_t *partitionstruc, mp_limb_t **partitionbest);
+void partition_unalloc(partition_t *partitionstruc);
+
 /*Fonctions d'affichage*/
 void printPartition(unsigned long p, unsigned long n, mp_limb_t **partition);
 unsigned long schurNumberScanPartitionFromFile(char *filename, partition_t *partitionstruc);
