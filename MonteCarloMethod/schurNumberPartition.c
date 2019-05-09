@@ -16,8 +16,6 @@ void partition_init(unsigned int pmax, unsigned long nmax, partition_t *partitio
     mp_size_t limballoc;
     mp_limb_t *work0;
     mp_limb_t *work1;
-    mp_limb_t *set;
-    mp_limb_t *setinvert;
     mp_limb_t **partition;
     mp_limb_t **partitioninvert;
     
@@ -28,13 +26,16 @@ void partition_init(unsigned int pmax, unsigned long nmax, partition_t *partitio
     partition = calloc(pmax, sizeof(mp_limb_t *));           //Tableau contenant la partition
     partitioninvert = calloc(pmax, sizeof(mp_limb_t *));     //Tableau contenant les ensembles "inverses" de la partition
     
-    set = *partition;
-    setinvert = *partitioninvert;
+    partitionstruc->work0 = work0;
+    partitionstruc->work1 = work1;
+    partitionstruc->partition = partition;
+    partitionstruc->partitioninvert = partitioninvert;
+    
     for (i=0; i<pmax; i++) {
-        set = calloc(limballoc, sizeof(mp_limb_t));
-        setinvert = calloc(limballoc, sizeof(mp_limb_t));
-        set++;
-        setinvert++;
+        *partition = calloc(limballoc, sizeof(mp_limb_t));
+        *partitioninvert = calloc(limballoc, sizeof(mp_limb_t));
+        partition++;
+        partitioninvert++;
     }
     
     /*Initialisation des variables*/
@@ -43,10 +44,6 @@ void partition_init(unsigned int pmax, unsigned long nmax, partition_t *partitio
     partitionstruc->n = 0;
     partitionstruc->limballoc = limballoc;
     partitionstruc->limbsize = 0;
-    partitionstruc->work0 = work0;
-    partitionstruc->work1 = work1;
-    partitionstruc->partition = partition;
-    partitionstruc->partitioninvert = partitioninvert;
 }
 
 #define REALLOC(ptr, reptr, size, resize) \
@@ -110,23 +107,23 @@ void partition_realloc(partition_t *partitionstruc, mp_limb_t **partitionbest) {
 void partition_unalloc(partition_t *partitionstruc) {
     /*Libère tous les grands entiers associés aux ensembles de partitionstruc.*/
     unsigned i, pmax;
-    mp_limb_t *set, *setinvert;
+    mp_limb_t **partition;
+    mp_limb_t **partitioninvert;
     
     pmax = partitionstruc->pmax;
-    set = *(partitionstruc->partition);
-    setinvert = *(partitionstruc->partitioninvert);
+    partition = partitionstruc->partition;
+    partitioninvert = partitionstruc->partitioninvert;
     for (i=0; i<pmax; i++) {
-        free(set);
-        free(setinvert);
-        set++;
-        setinvert++;
+        free(*partition);
+        free(*partitioninvert);
+        partition++;
+        partitioninvert++;
     }
     free(partitionstruc->partition);
     free(partitionstruc->partitioninvert);
     free(partitionstruc->work0);
     free(partitionstruc->work1);
 }
-
 
 void partition_copy(partition_t *partitionstrucd, partition_t *partitionstrucs) {
     /*Copier partitionstrucs dans partitionstrucs.*/
@@ -136,8 +133,8 @@ void partition_copy(partition_t *partitionstrucd, partition_t *partitionstrucs) 
     mp_size_t limballoc;
     mp_size_t limbsize;
     mp_size_t limballocs;
-    mp_limb_t *sets, *setd;
-    mp_limb_t *setinverts, *setinvertd;
+    mp_limb_t **partitions, **partitiond;
+    mp_limb_t **partitioninverts, **partitioninvertd;
     
     pmax = partitionstrucd->pmax;
     limballoc = partitionstrucd->limballoc;
@@ -151,19 +148,19 @@ void partition_copy(partition_t *partitionstrucd, partition_t *partitionstrucs) 
          A faire*/
     }
     
-    sets = *(partitionstrucs->partition);
-    setinverts = *(partitionstrucs->partitioninvert);
-    setd = *(partitionstrucd->partition);
-    setinvertd = *(partitionstrucd->partitioninvert);
+    partitions = partitionstrucs->partition;
+    partitioninverts = partitionstrucs->partitioninvert;
+    partitiond = partitionstrucd->partition;
+    partitioninvertd = partitionstrucd->partitioninvert;
     for (i=0; i<p; i++) {
-        mpn_zero(setd, limballoc);
-        mpn_zero(setinvertd, limballoc);
-        mpn_copyd(setd, sets, limbsize);
-        mpn_copyd(setinvertd + limballoc - limbsize, setinverts + limballocs - limbsize, limbsize);
-        sets++;
-        setd++;
-        setinverts++;
-        setinvertd++;
+        mpn_zero(*partitiond, limballoc);
+        mpn_zero(*partitioninvertd, limballoc);
+        mpn_copyd(*partitiond, *partitions, limbsize);
+        mpn_copyd(*partitioninvertd + limballoc - limbsize, *partitioninverts + limballocs - limbsize, limbsize);
+        partitions++;
+        partitiond++;
+        partitioninverts++;
+        partitioninvertd++;
     }
     
     partitionstrucd->p = p;
