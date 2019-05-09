@@ -15,61 +15,6 @@
 #define GMP_2EXP_NUMB_BITS 5
 #endif
 
-#define REALLOC(ptr, reptr, size, resize) \
-do { \
-reptr = realloc(ptr, resize);\
-while (reptr == NULL && resize > size) { \
-resize -= resize >> 1;\
-reptr = realloc(ptr, resize);\
-} \
-if (reptr != NULL) { \
- ptr = reptr;\
-} \
-} while(0)
-
-void partition_realloc(partition_t *partitionstruc, mp_limb_t **partitionbest) {
-    unsigned int i, p;
-    mp_size_t limballoc, limbrealloc;
-    mp_limb_t *allocptr, *reallocptr;
-    mp_limb_t **partition, **partitioninvert;
-    
-    limballoc = partitionstruc->limballoc;
-    limbrealloc = 2*limballoc;
-    p = partitionstruc->pmax;
-    
-    allocptr = partitionstruc->work0;
-    REALLOC(allocptr, reallocptr, limballoc, limbrealloc);
-    partitionstruc->work0 = allocptr;
-    allocptr = partitionstruc->work1;
-    REALLOC(allocptr, reallocptr, limballoc, limbrealloc);
-    partitionstruc->work1 = allocptr;
-    
-    partition = partitionstruc->partition;
-    partitioninvert = partitionstruc->partitioninvert;
-    for (i=0; i<p; i++) {
-        allocptr = *partition;
-        REALLOC(allocptr, reallocptr, limballoc, limbrealloc);
-        partition = &allocptr;
-        
-        allocptr = *partitioninvert;
-        REALLOC(allocptr, reallocptr, limballoc, limbrealloc);
-        partitioninvert = &allocptr;
-        
-        allocptr = *partitionbest;
-        REALLOC(allocptr, reallocptr, limballoc, limbrealloc);
-        partitionbest = &allocptr;
-        
-        partition++;
-        partitioninvert++;
-        partitionbest++;
-    }
-    for (i=0; i<p; i++) {
-        partitioninvert--;
-        mpn_lshift(*partitioninvert, *partitioninvert, limbrealloc, limbrealloc - limballoc);
-    }
-    partitionstruc->limballoc = limbrealloc;
-}
-
 unsigned long schurNumberSimpleMonteCarloLevelIteration(partition_t *sfpartitionstruc, unsigned int level, mp_limb_t **sfpartitionbest, unsigned int *pbestptr, unsigned int simulnum0) {
     /*Effectue une simulation de niveau l sur sfpartition et renvoie le score du meilleur résultat.
      La partition correspondant est conservée dans sfpartitionbest.*/
