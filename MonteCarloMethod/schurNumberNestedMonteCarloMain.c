@@ -105,7 +105,6 @@ int main(int argc, const char * argv[]) {
     FILE *ofileptr;
     mp_limb_t **sfpartitionbestglobal;
     partition_t partitionbeginstruc;
-    partition_t *partitionbeginptr;
     
     /*Set variables to default*/
     level = 1;
@@ -115,7 +114,6 @@ int main(int argc, const char * argv[]) {
     statistics = 0;
     bfilename = NULL;
     ofilename = NULL;
-    partitionbeginptr = NULL;
     
     while ((optc = getopt(argc, argv, "hpvl:s:i:b:o:")) != -1) {
         /*Parse arguments*/
@@ -187,7 +185,14 @@ int main(int argc, const char * argv[]) {
             free(bfilename);
             return 0;
         }
-        partitionbeginptr = &partitionbeginstruc;
+    } else {
+        /*Prendre pour partition initiale {{1}}*/
+        partition_init(1, 1, &partitionbeginstruc);
+        partitionbeginstruc.p = 1;
+        partitionbeginstruc.limbsize = 1;
+        partitionbeginstruc.n = 1;
+        **(partitionbeginstruc.partition) = (mp_limb_t)1;
+        **(partitionbeginstruc.partitioninvert) = (mp_limb_t)1<<(mp_bits_per_limb - 1);
     }
     
     /*Allocation des variables.*/
@@ -197,7 +202,7 @@ int main(int argc, const char * argv[]) {
         sfpartitionbestglobal[i] = calloc(p, sizeof(mp_limb_t));
     }
     
-    nmax = schurNumberSimpleNestedMonteCarlo(p, narray, level, simulnum, iternum, sfpartitionbestglobal, partitionbeginptr);
+    nmax = schurNumberSimpleNestedMonteCarlo(p, narray, level, simulnum, iternum, sfpartitionbestglobal, &partitionbeginstruc);
     
     printf("Schur Number S(%u) ≥ %lu\n", p, nmax);
     
