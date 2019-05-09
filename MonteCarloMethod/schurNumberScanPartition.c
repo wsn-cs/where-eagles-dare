@@ -16,9 +16,8 @@ unsigned long schurNumberScanPartitionFromFile(char *filename, partition_t *part
     FILE *fp;
     int c;
     char *intstr;
-    unsigned long m, mmodbpl, mrem;
+    unsigned long m, mmodbpl, mdivbpl;
     size_t len, maxlen;// Taille de la chaîne de caractères codant un entier
-    unsigned int i;
     unsigned int p;  // Nombre d'ensembles de la partition
     unsigned long n; // Nombre d'entiers
     mp_size_t limballoc;
@@ -34,7 +33,7 @@ unsigned long schurNumberScanPartitionFromFile(char *filename, partition_t *part
     }
     
     /*Lecture préliminaire comptant les virgules et les points*/
-    p = 1;
+    p = 0;
     n = 0;
     c = getc(fp);
     len = 0;
@@ -66,30 +65,26 @@ unsigned long schurNumberScanPartitionFromFile(char *filename, partition_t *part
     }
     rewind(fp);
     
-    /*Allocation de la partition*/
-    limballoc = 1 + n / mp_bits_per_limb;
-    partition = calloc(p, sizeof(mp_limb_t *));
-    partitioninvert = calloc(p, sizeof(mp_limb_t *));
-    for (i=0; i<p; i++) {
-        partition[i] = calloc(limballoc, sizeof(mp_limb_t));
-        partitioninvert[i] = calloc(limballoc, sizeof(mp_limb_t));
-    }
+    /*Initialisation de la partition*/
+    partition_init(p, n, partitionstruc);
+    limballoc = partitionstruc->limballoc;
     
     /*Mise en place des éléments*/
     intstr = calloc(maxlen+1, sizeof(char));
     c = fgetc(fp);
     len = 0;
-    p = 0;
+    partition = partitionstruc->partition;
+    partitioninvert = partitionstruc->partitioninvert;
     while (c != EOF) {
         switch (c) {
             case ',':
                 intstr[len] = '\0';
                 m = atol(intstr)-1;
                 /*Placer m dans la bonne partition*/
-                mmodbpl = m / mp_bits_per_limb;
-                mrem = m%mp_bits_per_limb;
-                partition[p][mmodbpl] |= (mp_limb_t)1<<mrem;
-                partitioninvert[p][limballoc - mmodbpl - 1] |= (mp_limb_t)1 << (mp_bits_per_limb - mrem - 1);
+                mdivbpl = m / mp_bits_per_limb;
+                mmodbpl = m % mp_bits_per_limb;
+                (*partition)[mdivbpl] |= (mp_limb_t)1<<mmodbpl;
+                (*partitioninvert)[limballoc - mdivbpl - 1] |= (mp_limb_t)1 << (mp_bits_per_limb - mmodbpl - 1);
                 len = 0;
                 break;
                 
@@ -97,11 +92,12 @@ unsigned long schurNumberScanPartitionFromFile(char *filename, partition_t *part
                 intstr[len] = '\0';
                 m = atol(intstr)-1;
                 /*Placer m dans la bonne partition*/
-                mmodbpl = m / mp_bits_per_limb;
-                mrem = m%mp_bits_per_limb;
-                partition[p][mmodbpl] |= (mp_limb_t)1<<mrem;
-                partitioninvert[p][limballoc - mmodbpl - 1] |= (mp_limb_t)1 << (mp_bits_per_limb - mrem - 1);
-                p++;
+                mdivbpl = m / mp_bits_per_limb;
+                mmodbpl = m % mp_bits_per_limb;
+                (*partition)[mdivbpl] |= (mp_limb_t)1<<mmodbpl;
+                (*partitioninvert)[limballoc - mdivbpl - 1] |= (mp_limb_t)1 << (mp_bits_per_limb - mmodbpl - 1);
+                partition++;
+                partitioninvert++;
                 len = 0;
                 break;
                 
@@ -115,11 +111,7 @@ unsigned long schurNumberScanPartitionFromFile(char *filename, partition_t *part
     free(intstr);
     
     /*Sauvegarde dans partition_t*/
-    partitionstruc->limballoc = limballoc;
     partitionstruc->limbsize = limballoc;
-    partitionstruc->partition = partition;
-    partitionstruc->partitioninvert = partitioninvert;
-    partitionstruc->pmax = p;
     partitionstruc->p = p;
     partitionstruc->n = n;
     
