@@ -34,6 +34,7 @@ typedef struct schur_partition_struct partition_t;
 void partition_init(unsigned int pmax, unsigned long nmax, partition_t *partitionstruc);
 void partition_realloc(partition_t *partitionstruc, mp_limb_t **partitionbest);
 void partition_unalloc(partition_t *partitionstruc);
+void partition_copy(partition_t *partitionstrucd, partition_t *partitionstrucs);
 
 /*Fonctions d'affichage*/
 void printPartition(unsigned long p, unsigned long n, mp_limb_t **partition);
