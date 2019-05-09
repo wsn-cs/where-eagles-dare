@@ -35,8 +35,10 @@ void printPartition(unsigned long p, unsigned long n, mp_limb_t **partition);
 unsigned long schurNumberScanPartitionFromFile(char *filename, partition_t *partitionstruc);
 
 /*Fonction ajoutant les entiers un par un*/
-unsigned long schurNumberSimpleNestedMonteCarlo(unsigned int p, unsigned long *narray, unsigned int level,
-                                                unsigned int simulnum, unsigned int iternum, mp_limb_t **sfpartitionbestglobal,
-                                                partition_t *sfpartitionbegin);
+unsigned long schurNumberSimpleNestedMonteCarlo(unsigned int p, unsigned long *narray, unsigned int level, unsigned int simulnum,
+                                                unsigned int iternum, mp_limb_t **sfpartitionbestglobal, partition_t *sfpartitionbegin);
+
+unsigned long schurNumberWeakSimpleNestedMonteCarlo(unsigned int p, unsigned long *narray, unsigned int level, unsigned int simulnum,
+                                                    unsigned int iternum, mp_limb_t **sfpartitionbestglobal, partition_t *sfpartitionbegin);
 
 #endif
