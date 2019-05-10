@@ -37,7 +37,7 @@ void partition_unalloc(partition_t *partitionstruc);
 void partition_copy(partition_t *partitionstrucd, partition_t *partitionstrucs);
 
 /*Fonctions d'affichage*/
-void printPartition(unsigned long p, unsigned long n, mp_limb_t **partition);
+void printPartition(unsigned int p, unsigned long n, mp_limb_t **partition);
 unsigned long schurNumberScanPartitionFromFile(char *filename, partition_t *partitionstruc);
 
 /*Fonction ajoutant les entiers un par un*/
