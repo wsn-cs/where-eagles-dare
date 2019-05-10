@@ -7,31 +7,53 @@ def possible_inserer(element, liste):
                 return False
     return True
 
-def nested(level, debut, partition, nb_boites): 
+def copie_part(partition) : 
+    p = []
+    for i in range(len(partition)) : 
+        p.append(list(partition[i]))
+    return p
 
+def level0(debut, partition, nb_boites):
+    p = copie_part(partition)
+    k = random.randint(0,nb_boites-1)
+    n = debut
+    sum_free = possible_inserer(debut, p[k])
+    while sum_free : 
+        p[k].append(n)
+        n+=1
+        k = random.randint(0,nb_boites-1)
+        sum_free = possible_inserer(n, p[k])
+            
+    return n, p
+
+def repetition_level0(debut, partition, nb_boites):
+    n_max = 0
+    partition_max = None
+    for _ in range(50) : 
+        n, candidat = level0(debut, partition, nb_boites)
+        if n > n_max : 
+            n_max = n 
+            partition_max = candidat
+    return n_max, partition_max
+
+def nested(level, debut, partition, nb_boites):
     if level == 0 : 
-        sum_free = True
-        a_ajouter = debut
-        while sum_free : 
-            k = random.randint(0, nb_boites-1)
-            sum_free = possible_inserer(a_ajouter, partition[k])
-            if sum_free : 
-                partition[k].append(a_ajouter)
-                a_ajouter+=1
-        return [a_ajouter-1, partition]
+        return repetition_level0(debut, partition, nb_boites)
     else : 
-        config_max = [0,partition]
-        config_fille = [0,partition]
-        for k in range(nb_boites):
-            sum_free = possible_inserer(debut, partition[k])
-            if sum_free : 
-                partition_k = partition.copy()
-                partition_k[k].append(debut)
-                config_fille = nested(level-1, debut+1, partition_k, nb_boites)
-                if config_fille[0] > config_max[0] : 
-                    config_max = config_fille
-        
-        print(config_max)
-        nested(level, debut+1, config_max[1], nb_boites)
+        score_max = 0 
+        boite_max = None
+        for boite in range(0, nb_boites-1) : 
 
-print(nested(1,1,[[] for k in range(3)], 3))
+            if possible_inserer(debut, partition[boite]) : 
+                p = copie_part(partition)
+                p[boite].append(debut)
+                score, _ = nested(level-1, debut+1, p, nb_boites)
+                if score > score_max : 
+                    score_max, boite_max,  = score, boite
+        if boite_max == None : 
+            return debut, partition
+        
+        partition[boite_max].append(debut)
+        return nested(level, debut+1, partition, nb_boites)
+        
+
