@@ -6,8 +6,8 @@
 //  Ce fichier contient la fonction main qui permet de construire un exécutable.
 //
 
+#include "asprintf.h"
 #include <stdio.h>
-#include <stdarg.h>
 #include <unistd.h>
 #include <libgen.h>
 #include <string.h>
@@ -28,11 +28,11 @@ void usage(char *cmdname) {
             basename(cmdname));
 }
 
-void printPartition(unsigned long p, unsigned long n, mp_limb_t **partition) {
+void printPartition(unsigned int p, unsigned long n, mp_limb_t **partition) {
     /*Affiche une partition.*/
     unsigned long limbn;
     mp_size_t limbsize;
-    unsigned long i;
+    unsigned int i;
     mp_bitcnt_t j;
     mp_limb_t *set;
     mp_limb_t limb;
@@ -44,7 +44,7 @@ void printPartition(unsigned long p, unsigned long n, mp_limb_t **partition) {
         for (limbn=0; limbn<limbsize; limbn++) {
             limb = set[limbn];
             for (j=0; j<mp_bits_per_limb; j++) {
-                if (limb & ((unsigned long)1<<j)) {
+                if (limb & ((mp_limb_t)1<<j)) {
                     printf(" %lu", limbn*mp_bits_per_limb + j + 1);
                 }
             }
@@ -53,40 +53,62 @@ void printPartition(unsigned long p, unsigned long n, mp_limb_t **partition) {
     }
 }
 
-/*Dans le cas où la fonction asprintf n'est pas implémentée, par exemple sous Windows.*/
+unsigned int makeInitialPartition(char *filename, partition_t *partitionbeginstruc) {
+    /*Si filename != NULL, lit le fichier filename et initie partitionbeginstruc à la partition
+        contenue dans le fichier. Si filename == NULL, partitionbeginstruc = {{1}}.
+     Renvoie la taille de la partition en l'absence de problème, 0 sinon.*/
+    unsigned int p;
+    
+    if (filename) {
+        /*Débuter à partir d'une partition contenue dans le fichier filename.*/
+        p = schurNumberScanPartitionFromFile(filename, partitionbeginstruc);
+    } else {
+        /*Prendre pour partition initiale {{1}}*/
+        p = 1;
+        partition_init(1, 1, partitionbeginstruc);
+        partitionbeginstruc->p = 1;
+        partitionbeginstruc->limbsize = 1;
+        partitionbeginstruc->n = 1;
+        **(partitionbeginstruc->partition) = (mp_limb_t)1;
+        **(partitionbeginstruc->partitioninvert) = (mp_limb_t)1<<(mp_bits_per_limb - 1);
+    }
+    
+    return p;
+}
 
-#ifndef _vscprintf
-/* For some reason, MSVC fails to honour this #ifndef. */
-/* Hence function renamed to _vscprintf_so(). */
-int _vscprintf_so(const char * format, va_list pargs) {
-    int retval;
-    va_list argcopy;
-    va_copy(argcopy, pargs);
-    retval = vsnprintf(NULL, 0, format, argcopy);
-    va_end(argcopy);
-    return retval;}
-#endif // _vscprintf
-
-#ifndef vasprintf
-int vasprintf(char **strp, const char *fmt, va_list ap) {
-    int len = _vscprintf_so(fmt, ap);
-    if (len == -1) return -1;
-    char *str = malloc((size_t) len + 1);
-    if (!str) return -1;
-    int r = vsnprintf(str, len + 1, fmt, ap); /* "secure" version of vsprintf */
-    if (r == -1) return free(str), -1;
-    *strp = str;
-    return r;}
-#endif // vasprintf
-
-#ifndef asprintf
-int asprintf(char *strp[], const char *fmt, ...) {
-    va_list ap;
-    va_start(ap, fmt);
-    int r = vasprintf(strp, fmt, ap);
-    va_end(ap);
-    return r;}
-#endif // asprintf
+char saveDistribution(char *filename, unsigned long *distribution, size_t size, unsigned long nmax) {
+    /*Enregistre les n entiers de distribution dans un fichier au format tsv.
+       Le format est entier_n\tnombre_d'occurences\n.
+     Renvoie 1 si tout s'est bien passé, 0 sinon.*/
+    FILE *fp;
+    unsigned long n;
+    unsigned long i;
+    unsigned long count, total;
+    
+    fp = fopen(filename, "w");
+    if (fp) {
+        n = nmax;
+        total = 0;
+        while (total < size) {
+            count = 0;  // Compte le nombre de fois qu'une partition de [1, n] a été obtenue
+            for (i=0; i<size; i++) {
+                if (distribution[i] == n) {
+                    count++;
+                    total++;
+                }
+            }
+            if (count) {
+                /*Au moins une partition sans-somme de [1, n] a été obtenue.*/
+                fprintf(fp, "%lu\t%lu\r\n", n, count);
+            }
+            n--;
+        }
+        fclose(fp);
+        return 1;
+    }
+    
+    return 0;
+}
 
 int main(int argc, const char * argv[]) {
     char optc;
@@ -96,13 +118,12 @@ int main(int argc, const char * argv[]) {
     unsigned int iternum;
     char printpartition;
     char statistics;
+    char fileproblem;
     unsigned long *narray;
-    unsigned long n, nmax;
-    unsigned long count, total;
+    unsigned long nmax;
     double nmean, nvar, delta;
     char *bfilename;
     char *ofilename;
-    FILE *ofileptr;
     mp_limb_t **sfpartitionbestglobal;
     partition_t partitionbeginstruc;
     
@@ -112,6 +133,7 @@ int main(int argc, const char * argv[]) {
     iternum = 64;
     printpartition = 0;
     statistics = 0;
+    fileproblem = 0;
     bfilename = NULL;
     ofilename = NULL;
     
@@ -171,106 +193,74 @@ int main(int argc, const char * argv[]) {
         return 0;
     }
     
-    
+    i = makeInitialPartition(bfilename, &partitionbeginstruc);
+    if (!i) {
+        /*Problème dans l'ouverture du fichier bfilename*/
+        fprintf(stderr, "%s: unable to open file %s.\n", basename(argv[0]), bfilename);
+        fileproblem = 1;
+    }
+    if (i > p) {
+        fprintf(stderr, "%s: the partition in file %s contains more sets (%u sets) than specified (%u sets). Unable to do any computations.\n", basename(argv[0]), bfilename, i, p);
+        fileproblem = 1;
+    }
     if (bfilename) {
-        /*Débuter à partir d'une partition contenue dans le fichier filename.*/
-        schurNumberScanPartitionFromFile(bfilename, &partitionbeginstruc);
-        if (!i) {
-            fprintf(stderr, "%s: unable to open file %s.\n", basename(argv[0]), bfilename);
-            free(bfilename);
-            return 0;
-        }
-        if (i < p) {
-            fprintf(stderr, "%s: the partition in file %s contains more sets (%u sets) than specified (%u sets). Unable to do any computations.\n", basename(argv[0]), bfilename, i, p);
-            free(bfilename);
-            return 0;
-        }
-    } else {
-        /*Prendre pour partition initiale {{1}}*/
-        partition_init(1, 1, &partitionbeginstruc);
-        partitionbeginstruc.p = 1;
-        partitionbeginstruc.limbsize = 1;
-        partitionbeginstruc.n = 1;
-        **(partitionbeginstruc.partition) = (mp_limb_t)1;
-        **(partitionbeginstruc.partitioninvert) = (mp_limb_t)1<<(mp_bits_per_limb - 1);
-    }
-    
-    /*Allocation des variables.*/
-    narray = calloc(simulnum, sizeof(unsigned long));
-    sfpartitionbestglobal = calloc(p, sizeof(mp_limb_t *)); //Contiendra la plus grande partition sans-somme trouvée.
-    for (i=0; i<p; i++) {
-        sfpartitionbestglobal[i] = calloc(p, sizeof(mp_limb_t));
-    }
-    
-    nmax = schurNumberSimpleNestedMonteCarlo(p, narray, level, simulnum, iternum, sfpartitionbestglobal, &partitionbeginstruc);
-    
-    printf("Schur Number S(%u) ≥ %lu\n", p, nmax);
-    
-    if (printpartition) {
-        /*Afficher la meilleure partition sans-somme trouvée.*/
-        printPartition(p, nmax, sfpartitionbestglobal);
-    }
-    
-    if (statistics) {
-        /*Calculer la valeur moyenne et l'écart-type grâce à la méthode de Welford.*/
-        nmean = 0;
-        nvar = 0;
-        for (i=0; i < simulnum; i++) {
-            delta = (double)narray[i] - nmean;
-            nmean += delta/(i+1);
-            nvar += delta * ((double)narray[i] - nmean);
-        }
-        nvar = nvar / (simulnum-1);
-        printf("Moyenne : %f\nEcart-type : %f\n", nmean, sqrt(nvar));
-    }
-    
-    if (ofilename) {
-        /*Placer les entiers de narray dans un fichier au format tsv.
-         Le format est entier_n\tnombre_d'occurences\n.*/
-        ofileptr = fopen(ofilename, "w");
-        if (ofileptr) {
-            n = nmax;
-            total = 0;
-            while (total < simulnum) {
-                count = 0;  // Compte le nombre de fois qu'une partition de [1, n] a été obtenue
-                for (i=0; i<simulnum; i++) {
-                    if (narray[i] == n) {
-                        count++;
-                        total++;
-                    }
-                }
-                if (count) {
-                    /*Au moins une partition sans-somme de [1, n] a été obtenue.*/
-                    fprintf(ofileptr, "%lu\t%lu\r\n", n, count);
-                }
-                n--;
-            }
-            fclose(ofileptr);
-        } else {
-            fprintf(stderr, "%s: unable to write in %s.\n", basename(argv[0]), ofilename);
-        }
-        free(ofilename);
-    }
-    
-    /*Déallocation des variables.*/
-    free(narray);
-    for (i=0; i<p; i++) {
-        free(sfpartitionbestglobal[i]);
-    }
-    free(sfpartitionbestglobal);
-    
-    if (bfilename) {
-        /*Déallocation de la partition initiale*/
-        p = partitionbeginstruc.p;
-        for (i=0; i<p; i++) {
-            free(partitionbeginstruc.partition[i]);
-            free(partitionbeginstruc.partitioninvert[i]);
-        }
-        free(partitionbeginstruc.partition);
-        free(partitionbeginstruc.partitioninvert);
         free(bfilename);
+    }
+    if (ofilename) {
+        i = saveDistribution(ofilename, NULL, 0, 0);
+        if (!i) {
+            fprintf(stderr, "%s: unable to open %s for writing.\n", basename(argv[0]), ofilename);
+            free(ofilename);
+            fileproblem = 1;
+        }
+    }
+    
+    if (!fileproblem) {
+        /*Allocation des variables.*/
+        narray = calloc(simulnum, sizeof(unsigned long));
+        sfpartitionbestglobal = calloc(p, sizeof(mp_limb_t *)); //Contiendra la plus grande partition sans-somme trouvée.
+        for (i=0; i<p; i++) {
+            sfpartitionbestglobal[i] = calloc(p, sizeof(mp_limb_t));
+        }
+        
+        nmax = schurNumberSimpleNestedMonteCarlo(p, narray, level, simulnum, iternum, sfpartitionbestglobal, &partitionbeginstruc);
+        
+        printf("Schur Number S(%u) ≥ %lu\n", p, nmax);
+        
+        if (printpartition) {
+            /*Afficher la meilleure partition sans-somme trouvée.*/
+            printPartition(p, nmax, sfpartitionbestglobal);
+        }
+        
+        if (statistics) {
+            /*Calculer la valeur moyenne et l'écart-type grâce à la méthode de Welford.*/
+            nmean = 0;
+            nvar = 0;
+            for (i=0; i < simulnum; i++) {
+                delta = (double)narray[i] - nmean;
+                nmean += delta/(i+1);
+                nvar += delta * ((double)narray[i] - nmean);
+            }
+            nvar = nvar / (simulnum-1);
+            printf("Moyenne : %f\nEcart-type : %f\n", nmean, sqrt(nvar));
+        }
+        
+        if (ofilename) {
+            i = saveDistribution(ofilename, narray, simulnum, nmax);
+            if (!i) {
+                fprintf(stderr, "%s: unable to write in file %s.\n", basename(argv[0]), ofilename);
+            }
+            free(ofilename);
+        }
+        
+        /*Déallocation des variables.*/
+        free(narray);
+        for (i=0; i<p; i++) {
+            free(sfpartitionbestglobal[i]);
+        }
+        free(sfpartitionbestglobal);
+        partition_unalloc(&partitionbeginstruc);
     }
     
     return 0;
 }
-
