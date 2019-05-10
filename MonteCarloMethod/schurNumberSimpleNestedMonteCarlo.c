@@ -6,6 +6,7 @@
 //
 
 #include "schurNumberNestedMonteCarloHeader.h"
+#include "random_uniform.h"
 
 #if GMP_NUMB_BITS == 64
 #define GMP_2EXP_NUMB_BITS 6
@@ -82,11 +83,7 @@ unsigned long schurNumberSimpleMonteCarloLevelIteration(partition_t *sfpartition
             }
             
             /* Sélectionner une huche aléatoirement parmi 0,…,prand-1*/
-            #ifdef arc4random_uniform
-            i = arc4random_uniform(prand);
-            #else
-            i = rand()%prand;
-            #endif
+            RANDOM_UNIFORM(prand);
             
             /*Tester si il est possible de mettre n+1 dans la huche i.*/
             mpn_rshift(work1, sfpartitioninvert[i] + limballoc - limbsize, limbsize, shift);
