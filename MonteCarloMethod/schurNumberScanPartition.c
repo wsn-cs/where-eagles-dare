@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include "schurNumberNestedMonteCarloHeader.h"
 
-unsigned long schurNumberScanPartitionFromFile(char *filename, partition_t *partitionstruc) {
+unsigned int schurNumberScanPartitionFromFile(char *filename, partition_t *partitionstruc) {
     /*Crée une partition à partir d'un fichier texte.
      Des virgules séparent les entiers au sein d'un même ensemble
      et des points séparent les ensembles entre eux.
