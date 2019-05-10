@@ -8,15 +8,8 @@
 #include "schurNumberNestedMonteCarloHeader.h"
 #include "random_uniform.h"
 
-#if GMP_NUMB_BITS == 64
-#define GMP_2EXP_NUMB_BITS 6
-#elif GMP_NUMB_BITS == 128
-#define GMP_2EXP_NUMB_BITS 7
-#elif GMP_NUMB_BITS == 32
-#define GMP_2EXP_NUMB_BITS 5
-#endif
-
-unsigned long schurNumberSimpleMonteCarloLevelIteration(partition_t *sfpartitionstruc, unsigned int level, mp_limb_t **sfpartitionbest, unsigned int *pbestptr, unsigned int simulnum0) {
+unsigned long schurNumberSimpleMonteCarloLevelIteration(partition_t *sfpartitionstruc, unsigned int level, mp_limb_t **sfpartitionbest,
+                                                        unsigned int *pbestptr, unsigned int simulnum0) {
     /*Effectue une simulation de niveau l sur sfpartition et renvoie le score du meilleur résultat.
      La partition correspondant est conservée dans sfpartitionbest.*/
     unsigned long n, nmax, nsimulated, nbest;
@@ -50,7 +43,7 @@ unsigned long schurNumberSimpleMonteCarloLevelIteration(partition_t *sfpartition
     /*Initialisation des variables auxiliaires*/
     nmodbpl = n%mp_bits_per_limb;
     shift = mp_bits_per_limb - nmodbpl;
-    wlimbsize = ((n+1)>>(GMP_2EXP_NUMB_BITS + 1)) + 1;
+    wlimbsize = ((n+1) / (2 * GMP_NUMB_BITS)) + 1;
     
     if (!level) {
         /*Simulation de niveau 0*/
@@ -83,7 +76,7 @@ unsigned long schurNumberSimpleMonteCarloLevelIteration(partition_t *sfpartition
             }
             
             /* Sélectionner une huche aléatoirement parmi 0,…,prand-1*/
-            RANDOM_UNIFORM(prand);
+            i = RANDOM_UNIFORM(prand);
             
             /*Tester si il est possible de mettre n+1 dans la huche i.*/
             mpn_rshift(work1, sfpartitioninvert[i] + limballoc - limbsize, limbsize, shift);
@@ -109,7 +102,7 @@ unsigned long schurNumberSimpleMonteCarloLevelIteration(partition_t *sfpartition
                 n++;
                 nmodbpl = n%mp_bits_per_limb;
                 shift = mp_bits_per_limb - nmodbpl;
-                wlimbsize = ((n+1)>>(GMP_2EXP_NUMB_BITS + 1)) + 1;
+                wlimbsize = ((n+1) / (2 * GMP_NUMB_BITS)) + 1;
             }
         }
         
@@ -183,7 +176,7 @@ unsigned long schurNumberSimpleMonteCarloLevelIteration(partition_t *sfpartition
                             nbest = nsimulated;
                             *pbestptr = pbestrec;
                             for (j=0; j<pbestrec; j++) {
-                                mpn_copyi(sfpartitionbest[j], sfpartitionbestrec[j], 1 + (nbest>>GMP_2EXP_NUMB_BITS));
+                                mpn_copyi(sfpartitionbest[j], sfpartitionbestrec[j], 1 + (nbest / GMP_NUMB_BITS));
                             }
                         }
                     }
@@ -194,7 +187,7 @@ unsigned long schurNumberSimpleMonteCarloLevelIteration(partition_t *sfpartition
                         nbest = nsimulated;
                         *pbestptr = pbestrec;
                         for (j=0; j<pbestrec; j++) {
-                            mpn_copyi(sfpartitionbest[j], sfpartitionbestrec[j], 1 + (nbest>>GMP_2EXP_NUMB_BITS));
+                            mpn_copyi(sfpartitionbest[j], sfpartitionbestrec[j], 1 + (nbest / GMP_NUMB_BITS));
                         }
                     }
                 }
@@ -226,7 +219,7 @@ unsigned long schurNumberSimpleMonteCarloLevelIteration(partition_t *sfpartition
                         nbest = nsimulated;
                         *pbestptr = pbestrec;
                         for (j=0; j<pbestrec; j++) {
-                            mpn_copyi(sfpartitionbest[j], sfpartitionbestrec[j], 1 + (nbest>>GMP_2EXP_NUMB_BITS));
+                            mpn_copyi(sfpartitionbest[j], sfpartitionbestrec[j], 1 + (nbest / GMP_NUMB_BITS));
                         }
                     }
                 }
@@ -237,7 +230,7 @@ unsigned long schurNumberSimpleMonteCarloLevelIteration(partition_t *sfpartition
                     nbest = nsimulated;
                     *pbestptr = pbestrec;
                     for (j=0; j<pbestrec; j++) {
-                        mpn_copyi(sfpartitionbest[j], sfpartitionbestrec[j], 1 + (nbest>>GMP_2EXP_NUMB_BITS));
+                        mpn_copyi(sfpartitionbest[j], sfpartitionbestrec[j], 1 + (nbest / GMP_NUMB_BITS));
                     }
                 }
             }
@@ -272,7 +265,7 @@ unsigned long schurNumberSimpleMonteCarloLevelIteration(partition_t *sfpartition
             sfpartitionstruc->n = n+1;
             nmodbpl = n%mp_bits_per_limb;
             shift = mp_bits_per_limb - nmodbpl;
-            wlimbsize = ((n+1)>>(GMP_2EXP_NUMB_BITS + 1)) + 1;
+            wlimbsize = ((n+1) / (2 * GMP_NUMB_BITS)) + 1;
             goto _simulbegin;
         } else {
             for (i=0; i<pmax; i++) {
@@ -314,7 +307,7 @@ unsigned long schurNumberSimpleNestedMonteCarlo(unsigned int p, unsigned long *n
         if (nsimulated > nbest) {
             nbest = nsimulated;
             for (j=0; j<pbest; j++) {
-                mpn_copyd(sfpartitionbestglobal[j], sfpartitionbest[j], 1 + (nbest>>GMP_2EXP_NUMB_BITS));
+                mpn_copyd(sfpartitionbestglobal[j], sfpartitionbest[j], 1 + (nbest / GMP_NUMB_BITS));
             }
         }
     }
