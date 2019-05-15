@@ -214,7 +214,9 @@ int main(int argc, const char * argv[]) {
                 break;
                 
             case 'o':
-                asprintf(&ofilename, "%s", optarg);
+                fprintf(stderr, "%s: option -o not yet implemented.\n", cmdname);
+                problem = 1;
+                //asprintf(&ofilename, "%s", optarg);
                 break;
                 
             case 'h':
@@ -283,11 +285,11 @@ int main(int argc, const char * argv[]) {
     if (bfilename) {
         free(bfilename);
     }
-    if (ofilename) {
-        i = saveDistribution(ofilename, NULL, 0, 0);
+    if (dfilename) {
+        i = saveDistribution(dfilename, NULL, 0, 0);
         if (!i) {
-            fprintf(stderr, "%s: unable to open %s for writing.\n", cmdname, ofilename);
-            free(ofilename);
+            fprintf(stderr, "%s: unable to open %s for writing.\n", cmdname, dfilename);
+            free(dfilename);
             problem = 1;
         }
     }
@@ -322,10 +324,10 @@ int main(int argc, const char * argv[]) {
             printf("Moyenne : %f\nEcart-type : %f\n", nmean, sqrt(nvar));
         }
         
-        if (ofilename) {
-            i = saveDistribution(ofilename, narray, simulnum, nmax);
+        if (dfilename) {
+            i = saveDistribution(dfilename, narray, simulnum, nmax);
             if (!i) {
-                fprintf(stderr, "%s: unable to write in file %s.\n", cmdname, ofilename);
+                fprintf(stderr, "%s: unable to write in file %s.\n", cmdname, dfilename);
             }
             free(ofilename);
         }
