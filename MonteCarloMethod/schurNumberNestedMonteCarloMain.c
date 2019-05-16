@@ -12,6 +12,7 @@
 #include <libgen.h>
 #include <string.h>
 #include <math.h>
+#include <time.h>
 #include "schurNumberNestedMonteCarloHeader.h"
 
 void usage(char *cmdname) {
@@ -28,6 +29,7 @@ void usage(char *cmdname) {
             "\t-l level: Specify the nesting level. By default level = 1.\n"\
             "\t-s simulnum: Specify the number of simulation at the top level. By default simulnum = 1.\n"\
             "\t-i iternum: Specify the number of iteration at level 0. By default iternum = 64.\n"\
+            "\t-t time: Specify a time (in minutes) after which no more simulations are launched.\n"\
             "\t-h: Print usage message.\n",
             cmdname);
 }
@@ -160,12 +162,16 @@ void printStatistics(unsigned long *distribution, size_t size) {
     printf("Moyenne : %f\nEcart-type : %f\nIntervalle de confiance : [%lu; %lu]\n", mean, sqrt(var), ninf, nsup);
 }
 
-unsigned long schurNumberNestedMonteCarlo(unsigned int p, unsigned long *narray, unsigned int level, unsigned int simulnum, unsigned int iternum, char method, mp_limb_t **sfpartitionbestglobal, partition_t *sfpartitionbeginstruc) {
+unsigned long schurNumberNestedMonteCarlo(unsigned int p, unsigned long *narray, unsigned int level, unsigned int simulnum,
+                                          unsigned int iternum, char method, mp_limb_t **sfpartitionbestglobal,
+                                          partition_t *sfpartitionbeginstruc, clock_t time) {
     /*Fonction à lancer pour trouver une borne inférieure au nombre de Schur S(p).
      Elle alloue la mémoire nécessaire aux simulations et lance simulnum simulations de niveau level.
      Les simulations de niveau 0 seront effectués simulnum0 fois.
      
-     La variable méthode permet de sélectionner la méthode à employer.*/
+     La variable méthode permet de sélectionner la méthode à employer. La variable time permet de spécifier une durée au bout de laquelle
+             plus aucune simulation n'est lancée.*/
+    clock_t maxclock;
     unsigned long nbest, nsimulated;
     unsigned int i, j, pbest;
     mp_size_t limballoc;
@@ -181,6 +187,7 @@ unsigned long schurNumberNestedMonteCarlo(unsigned int p, unsigned long *narray,
     }
     
     nbest = 1;
+    maxclock = clock() + time;
     for (i=0; i<simulnum; i++) {
         /*Création de la première partition à partir de sfpartitionbegin*/
         partition_copy(&sfpartitionstruc, sfpartitionbeginstruc);
@@ -201,6 +208,11 @@ unsigned long schurNumberNestedMonteCarlo(unsigned int p, unsigned long *narray,
             for (j=0; j<pbest; j++) {
                 mpn_copyd(sfpartitionbestglobal[j], sfpartitionbest[j], 1 + (nbest / GMP_NUMB_BITS));
             }
+        }
+        
+        if (clock() > maxclock) {
+            fprintf(stderr, "Process has lasted too much time. It has been interrupted after %u simulations.\n", i+1);
+            i = simulnum;
         }
     }
     
@@ -242,6 +254,7 @@ int main(int argc, const char * argv[]) {
     statistics = 0;
     method = '0';
     problem = 0;
+    clock_t cputimemax;
     bfilename = NULL;
     dfilename = NULL;
     ofilename = NULL;
@@ -297,6 +310,10 @@ int main(int argc, const char * argv[]) {
                 iternum = atoi(optarg);
                 break;
                 
+            case 't':
+                cputimemax = atol(optarg) * CLOCKS_PER_SEC * 60;
+                break;
+                
             default:
                 fprintf(stderr, "%s: -%c: invalid option\n", cmdname, optc);
                 usage(cmdname);
@@ -347,7 +364,8 @@ int main(int argc, const char * argv[]) {
             sfpartitionbestglobal[i] = calloc(p, sizeof(mp_limb_t));
         }
         
-        nmax = schurNumberSimpleNestedMonteCarlo(p, narray, level, simulnum, iternum, method, sfpartitionbestglobal, &partitionbeginstruc);
+        nmax = schurNumberSimpleNestedMonteCarlo(p, narray, level, simulnum, iternum, method, sfpartitionbestglobal, &partitionbeginstruc,
+                                                cputimemax);
         
         if (method == '0') {
             printf("Schur Number S(%u) ≥ %lu\n", p, nmax);
