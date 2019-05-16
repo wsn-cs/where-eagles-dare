@@ -157,7 +157,7 @@ void printStatistics(unsigned long *distribution, size_t size) {
     ninf++;
     nsup--;
     
-    printf("Moyenne : %f\nEcart-type : %f\nIntervalle de confiance : [%lu; %lu]", mean, sqrt(var), ninf, nsup);
+    printf("Moyenne : %f\nEcart-type : %f\nIntervalle de confiance : [%lu; %lu]\n", mean, sqrt(var), ninf, nsup);
 }
 
 unsigned long schurNumberNestedMonteCarlo(unsigned int p, unsigned long *narray, unsigned int level, unsigned int simulnum, unsigned int iternum, char method, mp_limb_t **sfpartitionbestglobal, partition_t *sfpartitionbeginstruc) {
