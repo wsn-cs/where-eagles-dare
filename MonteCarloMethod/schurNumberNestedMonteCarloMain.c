@@ -80,13 +80,30 @@ unsigned int makeInitialPartition(char *filename, partition_t *partitionbeginstr
     return p;
 }
 
+unsigned long countOccurence(unsigned long *distribution, size_t size, unsigned long n) {
+    /*Renvoie le nombre d'occurences de n dans distribution, tableau de taille size.*/
+    unsigned long count = 0;
+    unsigned long i;
+    unsigned long *ptr;
+    
+    ptr = distribution;
+    
+    for (i=0; i<size; i++) {
+        if (*ptr == n) {
+            count++;
+        }
+        ptr++;
+    }
+    
+    return count;
+}
+
 char saveDistribution(char *filename, unsigned long *distribution, size_t size, unsigned long nmax) {
     /*Enregistre les n entiers de distribution dans un fichier au format tsv.
        Le format est entier_n\tnombre_d'occurences\n.
      Renvoie 1 si tout s'est bien passé, 0 sinon.*/
     FILE *fp;
     unsigned long n;
-    unsigned long i;
     unsigned long count, total;
     
     fp = fopen(filename, "w");
@@ -94,13 +111,8 @@ char saveDistribution(char *filename, unsigned long *distribution, size_t size, 
         n = nmax;
         total = 0;
         while (total < size) {
-            count = 0;  // Compte le nombre de fois qu'une partition de [1, n] a été obtenue
-            for (i=0; i<size; i++) {
-                if (distribution[i] == n) {
-                    count++;
-                    total++;
-                }
-            }
+            count = countOccurence(distribution, size, n);  // Compte le nombre de fois qu'une partition de [1, n] a été obtenue
+            total += count;
             if (count) {
                 /*Au moins une partition sans-somme de [1, n] a été obtenue.*/
                 fprintf(fp, "%lu\t%lu\r\n", n, count);
@@ -112,6 +124,40 @@ char saveDistribution(char *filename, unsigned long *distribution, size_t size, 
     }
     
     return 0;
+}
+
+void printStatistics(unsigned long *distribution, size_t size) {
+    /*Calcule la valeur moyenne et l'écart-type grâce à la méthode de Welford. Calcule aussi un intervalle de confiance à 95%, i.e. le plus grand intervalle centré sur la moyenne I = [<x> - a; <x> + a] de sorte que P(I) ≤ 95%.
+     
+     Les résultats sont affichés dans stdout.*/
+    unsigned long i;
+    double mean, var, delta;
+    unsigned long ninf, nsup;   // Borne de l'intervalle de confiance
+    size_t icount;              // Nombre d'entiers appartenant à l'intervalle de confiance
+    size_t count95;             // count * 95 %
+    
+    mean = 0;
+    var = 0;
+    for (i=0; i < size; i++) {
+        delta = (double)distribution[i] - mean;
+        mean += delta/(i+1);
+        var += delta * ((double)distribution[i] - mean);
+    }
+    var = var / (size-1);
+    
+    ninf = floor(mean);
+    nsup = ceil(mean);
+    count95 = floor(size * 0.95);
+    icount = countOccurence(distribution, size, ninf) + countOccurence(distribution, size, nsup);
+    while (icount <= count95) {
+        ninf--;
+        nsup++;
+        icount += countOccurence(distribution, size, ninf) + countOccurence(distribution, size, nsup);
+    }
+    ninf++;
+    nsup--;
+    
+    printf("Moyenne : %f\nEcart-type : %f\nIntervalle de confiance : [%lu; %lu]", mean, sqrt(var), ninf, nsup);
 }
 
 unsigned long schurNumberNestedMonteCarlo(unsigned int p, unsigned long *narray, unsigned int level, unsigned int simulnum, unsigned int iternum, char method, mp_limb_t **sfpartitionbestglobal, partition_t *sfpartitionbeginstruc) {
@@ -181,7 +227,6 @@ int main(int argc, const char * argv[]) {
     char problem;
     unsigned long *narray;
     unsigned long nmax;
-    double nmean, nvar, delta;
     char *bfilename;
     char *dfilename;
     char *ofilename;
@@ -312,16 +357,7 @@ int main(int argc, const char * argv[]) {
         }
         
         if (statistics) {
-            /*Calculer la valeur moyenne et l'écart-type grâce à la méthode de Welford.*/
-            nmean = 0;
-            nvar = 0;
-            for (i=0; i < simulnum; i++) {
-                delta = (double)narray[i] - nmean;
-                nmean += delta/(i+1);
-                nvar += delta * ((double)narray[i] - nmean);
-            }
-            nvar = nvar / (simulnum-1);
-            printf("Moyenne : %f\nEcart-type : %f\n", nmean, sqrt(nvar));
+            printStatistics(narray, simulnum);
         }
         
         if (dfilename) {
