@@ -171,7 +171,7 @@ unsigned long schurNumberNestedMonteCarlo(unsigned int p, unsigned long *narray,
      
      La variable méthode permet de sélectionner la méthode à employer. La variable time permet de spécifier une durée au bout de laquelle
              plus aucune simulation n'est lancée.*/
-    clock_t maxclock;
+    clock_t clock0;
     unsigned long nbest, nsimulated;
     unsigned int i, j, pbest;
     mp_size_t limballoc;
@@ -187,7 +187,7 @@ unsigned long schurNumberNestedMonteCarlo(unsigned int p, unsigned long *narray,
     }
     
     nbest = 1;
-    maxclock = clock() + time;
+    clock0 = clock();
     for (i=0; i<simulnum; i++) {
         /*Création de la première partition à partir de sfpartitionbegin*/
         partition_copy(&sfpartitionstruc, sfpartitionbeginstruc);
@@ -210,7 +210,7 @@ unsigned long schurNumberNestedMonteCarlo(unsigned int p, unsigned long *narray,
             }
         }
         
-        if (clock() > maxclock) {
+        if (clock() - clock0 > maxclock) {
             fprintf(stderr, "Process has lasted too much time. It has been interrupted after %u simulations.\n", i+1);
             i = simulnum;
         }
