@@ -349,7 +349,11 @@ int main(int argc, const char * argv[]) {
         
         nmax = schurNumberSimpleNestedMonteCarlo(p, narray, level, simulnum, iternum, method, sfpartitionbestglobal, &partitionbeginstruc);
         
-        printf("Schur Number S(%u) ≥ %lu\n", p, nmax);
+        if (method == '0') {
+            printf("Schur Number S(%u) ≥ %lu\n", p, nmax);
+        } else {
+            printf("Weak Schur Number WS(%u) ≥ %lu\n", p, nmax);
+        }
         
         if (printpartition) {
             /*Afficher la meilleure partition sans-somme trouvée.*/
