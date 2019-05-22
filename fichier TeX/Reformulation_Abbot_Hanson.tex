@@ -10,6 +10,7 @@
 %SetFonts
 
 \newtheorem{theoreme}{Théorème}
+\newtheorem{proposition}{Proposition}
 
 \title{Reformulation d'Abbot-Hanson}
 \author{Richard Abou Chaaya, Thomas Bianco, Benoît Ferté, Gabriel Merlin, Mario Michelessa \\ \\
@@ -19,15 +20,17 @@ Encadrants : Joanna Tomasik, Arpad Rimmel}
 \begin{document}
 \maketitle
 
-Ce document propose une reformulation du théorème 2.1 de \cite{AbbotHanson} dans le cas particulier des nombres de Schur,
+Ce document propose une reformulation du théorème 2.1 ci-dessous de \cite{AbbotHanson} dans le cas particulier des nombres de Schur,
 en partant de deux partitions sans-sommes quelconques.
 
 \begin{theoreme}
 Soient $p$ et $q$ deux entiers naturels; $S(p + q) \geqslant 2 S(p) S(q) + S(p) + S(q).$
 \end{theoreme}
 
+\section{Construction de la partition}
+
 Pour prouver ce résultat, nous allons partir de deux partitions sans-sommes quelconques $(\mathrm{P}_i)_{1 \leqslant i \leqslant p}$
-et $(\mathrm{Q}_i)_{1 \leqslant j \leqslant q}$, respectivement à $p$ et $q$ ensembles.
+et $(\mathrm{Q}_j)_{1 \leqslant j \leqslant q}$, respectivement à $p$ et $q$ ensembles.
 Notons $m$ et $n$ les entiers tels que $\{1, \dots, m\} = \mathrm{P}_1 \cup \dots \cup \mathrm{P}_p$
 et $\{1, \dots, n\} = \mathrm{Q}_1 \cup \dots \cup \mathrm{Q}_q$.
 Nous allons construire une partition sans-somme de $\{1, \dots, nN + m\}$ à $p+q$ ensembles à partir de ces deux partitions,
@@ -86,6 +89,52 @@ Quand les deux conditions sont regroupées, il vient finalement $N \in \{2m, 2m+
 
 Pour obtenir l'inégalité annoncée, il suffit de prendre $m = S(p)$ et $n = S(q)$~:
 une partition sans-somme de $\{1, \dots, S(p)(2S(q)+1) + S(q) \}$ à $p+q$ éléments ayant été construite, $S(p+q) \geqslant S(p)(2S(q)+1) + S(q)$.
+
+\section{Propriétés de la partition}
+
+Regardons les entiers susceptibles d'être ajoutés à une partition construite selon la méthode d'Abbot-Hanson.
+Etant donné un entier $a$ et $\mathrm{E}$ une partie de $\mathbf{N}$, notons $v_a(\mathrm{E})$
+le nombre de couples d'entiers $(a', a'') \in \mathrm{E}\times\mathrm{E}$ tels que $a' + a'' = a$.
+
+Considérons à nouveau deux partitions sans-sommes quelconques $(\mathrm{P}_i)_{1 \leqslant i \leqslant p}$
+et $(\mathrm{Q}_j)_{1 \leqslant j \leqslant q}$, et reprenons les mêmes notations que précédemment.
+Soit $a$ un entier compris entre $nN + m + 1$ et $2nN - 1$.
+Il peut s'écrire sous la forme $a = bN + c$, où $n \leqslant b \leqslant 2n-1$ et $0 \leqslant c \leqslant N-1$.
+
+Si un couple $(c', c'') \in \mathrm{P}_i \times \mathrm{P}_i$ a pour somme $c$,
+alors les $2n-b+1$ couples $(b' N + c', (b-b')N + c'')$, $b-n \leqslant b' \leqslant n$, appartiennent à $\mathrm{R}_i \times \mathrm{R}_i$
+et vérifient $(b'N + c') + ((b-b')N + c'') = bN + c = a$, donc $v_a(\mathrm{R}_i) \geqslant (2n-b+1) v_c(\mathrm{P}_i)$.
+
+Réciproquement, si $(a', a'') \in \mathrm{R}_i \times \mathrm{R}_i$ a pour somme $a$,
+en écrivant $a' = b' N + c'$ et $a'' = b'' N + c''$, $0 \leqslant b', b'' \leqslant n$ et $(c', c'') \in \mathrm{P}_i \times \mathrm{P}_i$,
+\[ bN + c = (b' + b'')N + (c'+c'') ,\]
+et le fait que $N > 2m-1$ impose $c = c' + c''$ et $b' + b'' = b$.
+En outre, $0 \leqslant b' \leqslant n$, d'où l'inégalité inverse $v_a(\mathrm{R}_i) \leqslant (2n-b+1) v_c(\mathrm{P}_i)$.
+
+Faisons de même pour les ensembles $\mathrm{R}_{p+j}$.
+
+Si $(b', b'') \in \mathrm{Q}_j \times \mathrm{Q}_j$ a pour somme $b$,
+alors les $2(N-m-1)-c+1$ couples $(b' N + c', b''N + c - c')$, $c-N+m-1 \leqslant c' \leqslant N-m-1$, appartiennent à $\mathrm{R}_{p+j} \times \mathrm{R}_{p+j}$
+et vérifient $(b'N + c') + (b''N + c-c') = bN + c = a$.
+
+Réciproquement, si $(a', a'') \in \mathrm{R}_{p+j} \times \mathrm{R}_{p+j}$ a pour somme $a$,
+en écrivant $a' = b' N + c'$ et $a'' = b'' N + c''$, $0 \leqslant c', c'' \leqslant N-m-1$ et $(b', b'') \in \mathrm{Q}_j \times \mathrm{Q}_j$,
+\[ bN + c = (b' + b'')N + (c'+c'') ,\]
+et le fait que $N < 2m$ impose $c = c' + c''$ et $b' + b'' = b$.
+
+Ainsi, $v_a(\mathrm{R}_{p + j}) = (2N-2m-c-1) v_b(\mathrm{Q}_j)$.
+
+\begin{proposition}
+Si il n'est pas possible de rajouter l'entier $m+1$ à la partition sans-somme $(\mathrm{P}_i)_{1 \leqslant i \leqslant p}$
+ni $n+1$ à $(\mathrm{Q}_j)_{1 \leqslant j \leqslant q}$ en conservant le caractère sans-somme,
+alors $nN + m + 1$ ne peut être rajouté $(\mathrm{R}_k)_{1 \leqslant k \leqslant p+q}$.
+\end{proposition}
+
+Par hypothèse, quel que soit $1 \leqslant i \leqslant p$, il existe $c'$ et $c''$ dans $\mathrm{P}_i$ tels que $c' + c'' = m+1$,
+donc $nN + m + 1 = (nN + c') + c''$, avec $nN + c' \in \mathrm{R}_i$.
+
+De même, quel que soit $1 \leqslant j \leqslant q$, il existe $b'$ et $b''$ dans $\mathrm{Q}_j$ tels que $b' + b'' = n+1$,
+donc $nN + m + 1 = (n+1)N + m - N + 1 = (b'N - (N - m - 1)) + b''N$, avec $b'N - (N - m - 1)$ et $b''N \in \mathrm{R}_{p + j}$.
 
 \begin{thebibliography}{1}
  \bibitem{AbbotHanson}
