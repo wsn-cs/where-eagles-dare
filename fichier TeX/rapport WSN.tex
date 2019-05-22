@@ -61,7 +61,7 @@ On connait actuellement les valeurs exactes des nombres de Schur jusqu'à $k = 5
     \hline
     k & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12 \\ \hline
     S(k) & 1 & 4 & 13 & 44 & 160 [6] &  &  &  &  &  &  & \\
-    borne inf &  &  &  &  &  & 536 [2] & 1680 [2] & 5041 [5] & 15124 [5] & 51520 [7] & 172216 [7] & 575664 [7] \\ 
+    borne inf &  &  &  &  &  & 536 [2] & 1680 [2] & 5041 [5] & 15124 [5] & 51120 [7] & 172216 [7] & 575664 [7] \\ 
     borne sup &  &  &  &  &  & 1927 & 13490 & 107921 & 971290 & 8956901 & 98525912 & 1182310945 \\ \hline
     WS(k) & 2 & 8 & 23 & 66 &  &  &  &  &  &  &  &  \\ 
     borne inf &  &  &  &  & 196 [1] & 582 [3] & 1740 [4] & 5201 [4] & 15596 [4] & 51520 & 172216 & 575664 \\
@@ -141,7 +141,7 @@ De plus, la preuve de ces théorème est constructive, et fournit une piste int�
 Une représentation intéressante des éléments d'une partition est de les considérer comme un tableau de booléens, le i-ème nombre valant 1 si i est présent dans la partition. Cela permet de vérifier très rapidement si un nombre peut être ajouté dans une partition en respectant la propriété sum-free.
 \subsubsection{algorithme exhaustif}
 Dès n=4, l'algorithme prend trop de temps pour s'exécuter.
-\subsubsection{nested Monte-Carlo}
+\subsubsection{Nested Monte-Carlo}
 Le code a été mis sous forme d'un exécutable avec quatre paramètres : 
 \begin{itemize}
     \item le nombre d'ensembles de la partition
@@ -151,6 +151,8 @@ Le code a été mis sous forme d'un exécutable avec quatre paramètres :
 \end{itemize}
  L'algorithme renvoie la meilleure partition sans-somme trouvée ainsi que l'écart-type et la moyenne des partitions optimales générées au plus haut niveau. 
  \\ La moyenne augmente globalement lorsque le niveau ou le nombre d’iterations augmente, tandis que l'écart type diminue. Les performances augmentent plus avec le niveau qu'avec le nombre d’iterations.
+\subsubsection{Algorithme de Abbott-Hanson}
+L'idée est de reprendre la démonstration du théorème de Abbott et Hanson [7], afin de créer des partitions à $n+m$ ensembles à partir de partitions à $n$ et $m$ ensembles. Il faut pour cela d'abord trouver une bonne partition à n et à m ensembles, mais non optimale, sinon l'algorithme se bloque, puis, à partir de la nouvelle partition créée, on lance l'algorithme de Monte-Carlo pour améliorer le résultat.
 
 \section{Annexes}
 Des slides, supports pour une présentation orale, ont été réalisées à chaque séance.
@@ -182,5 +184,3 @@ Des slides, supports pour une présentation orale, ont été réalisées à chaq
 
 
 \end{document}
-
-
