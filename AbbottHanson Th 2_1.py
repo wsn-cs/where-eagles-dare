@@ -1,6 +1,6 @@
 ### Pour 10
 
-"""P=[[4,5,15,16,22,28,29,39,40,41,42,48,49,59],
+P=[[4,5,15,16,22,28,29,39,40,41,42,48,49,59],
    [2,3,8,14,19,20,24,25,36,46,47,51,62,73],
    [7,9,11,12,13,17,27,31,32,33,35,37,53,56,57,61,79],
    [1,6,10,18,21,23,26,30,34,38,43,45,50,54,65,74],
@@ -16,13 +16,13 @@ for E in [P,Q]:
     for part in E:
         n = len(part)
         for i in range(n):
-            part.append(161-part[i])"""
+            part.append(161-part[i])
             
-P=[[1,2,4,8],
+"""P=[[1,2,4,8],
    [3,5,6,7]]
 
 Q=[[1,2,4,8],
-   [3,5,6,7]]
+   [3,5,6,7]]"""
 
 p=len(P)
 q=len(Q)
@@ -46,7 +46,10 @@ for b in range(1,n+1):
 for P in R:
     P.sort()
 
-print(R)
-print(len(R))
-print(max(max(l) for l in R))
+def P10():
+   global R
+   return R
 
+"""print(R)
+print(len(R))
+print(max(max(l) for l in R))"""
