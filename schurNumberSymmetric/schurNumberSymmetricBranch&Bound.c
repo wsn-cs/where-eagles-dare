@@ -124,7 +124,7 @@ unsigned long schurNumberSymmetricBranch(unsigned long n, partition_t *partition
                     // Retirer m
                     sfpartition[i][limbsize -1] ^= mask;
                     // Trouver le plus petit m' tel que n-(m+m') appartienne à la huche i
-                    mblocking = mpn_scan1(work0, mmed);
+                    mblocking = mpn_scan1(work0, mmed) + 1;
                     if (mblocking > mblockingmax) {
                         mblockingmax = mblocking;
                         iblocking = i;
