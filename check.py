@@ -1,32 +1,21 @@
 import numpy as np
 
+def partition_reader(n):
+    with open("partitions/partition_" + str(n) + ".txt") as file:
+        lines = file.readlines()
+        output = []
+        for line in lines:
+            line_list = line.split()
+            output.append(list(map(int,line_list)))
+    return output
+
 ### Pour 10
 
-k = 5
+k = 12
 
-P1=[[4,5,15,16,22,28,29,39,40,41,42,48,49,59],
-   [2,3,8,14,19,20,24,25,36,46,47,51,62,73],
-   [7,9,11,12,13,17,27,31,32,33,35,37,53,56,57,61,79],
-   [1,6,10,18,21,23,26,30,34,38,43,45,50,54,65,74],
-   [44,52,55,58,60,63,64,66,67,68,69,70,71,72,75,76,77,78,80]]
+P1 = partition_reader(6)
    
-Q=[[4,5,15,16,22,28,29,39,40,41,42,48,49,59],
-   [2,3,8,14,19,20,24,25,36,46,47,51,62,73],
-   [7,9,11,12,13,17,27,31,32,33,35,37,53,56,57,61,79],
-   [1,6,10,18,21,23,26,30,34,38,43,45,50,54,65,74],
-   [44,52,55,58,60,63,64,66,67,68,69,70,71,72,75,76,77,78,80]]
-
-for E in [P1,Q]:
-    for part in E:
-        n = len(part)
-        for i in range(n):
-            part.append(161-part[i])
-            
-"""P1=[[1,4],
-   [2,3]]
-
-Q=[[1,4],
-   [2,3]]"""
+Q = partition_reader(6)
 
 p=len(P1)
 q=len(Q)
@@ -53,11 +42,11 @@ for P in R:
 def list_to_bin(liste):
     k = len(liste)
     n = max(max(liste[i]) for i in range(k))
-    output = np.zeros((k,n+1),int)
+    output = np.zeros((k,n),int)
     for i in range(k):
         for j in liste[i]:
-            output[i][j] = 1
-    return [L[1:] for L in output]
+            output[i][j-1] = 1
+    return output
 
 def bin_to_list(part):
     k = len(part)
@@ -67,7 +56,7 @@ def bin_to_list(part):
         output.append([])
         for j in range(n):
             if part[i][j]:
-                output[i].append(j)
+                output[i].append(j+1)
     return output
 
 def can_you_add_new_nb(part,weak=False):
@@ -75,26 +64,35 @@ def can_you_add_new_nb(part,weak=False):
     if n <= 1:
         return True
     if weak:
-        return not (True in np.logical_and(part[:(n//2)],part[n-1:(n-1)//2:-1]))
+        if not (True in np.logical_and(part[:(n//2)],part[n-1:(n-1)//2:-1])):
+            return True
+        else:
+            print(list(np.logical_and(part[:(n//2)],part[n-1:(n-1)//2:-1])).index(True))
+            return False
     else:
-        return not (True in np.logical_and(part[:((n+1)//2)],part[n-1:n//2 - 1:-1]))
+        if not (True in np.logical_and(part[:((n+1)//2)],part[n-1:n//2 - 1:-1])):
+            return True
+        else:
+            print(list(np.logical_and(part[:((n+1)//2)],part[n-1:n//2 - 1:-1])).index(True))
+            return False
 
 def is_sum_free(part,weak=False):
     n = len(part[0])
     for P in part:
         for i in range(n):
             if P[i] and (not can_you_add_new_nb(P[:i],weak)):
-                print(P[:i])
+                output = []
+                for j in range(i+1):
+                    if P[j]:
+                        output.append(j+1)
+                print(output)
                 return False
     return True
 
-# print(R)
-# print(max(max(P) for P in R))
-# print(is_sum_free(list_to_bin(R)))
+print(is_sum_free(list_to_bin(R)))
 
 with open("partitions/partition_" + str(k) + ".txt","w") as file:
-    for part in P1:
-        part.sort()
+    for part in R:
         for i in part:
             file.write(str(i)+" ")
         file.write("\n")
