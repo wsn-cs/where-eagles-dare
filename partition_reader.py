@@ -1,4 +1,4 @@
-fichier = "partitions/half_partition_6.txt"
+fichier = "partitions/partition_7.txt"
 
 with open(fichier) as file:
     lines = file.readlines()
@@ -11,9 +11,9 @@ with open(fichier) as file:
 for part in P:
     n = len(part)
     for i in range(n):
-        part.append(537-part[i])
+        part.append(841-part[i])
         
-with open("partitions/partition_6.txt","w") as file:
+with open("partitions/partition_7.txt","w") as file:
     for part in P:
         part.sort()
         for i in part:
