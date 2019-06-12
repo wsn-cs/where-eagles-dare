@@ -2,6 +2,8 @@ import numpy as np
 
 ### Pour 10
 
+k = 5
+
 P1=[[4,5,15,16,22,28,29,39,40,41,42,48,49,59],
    [2,3,8,14,19,20,24,25,36,46,47,51,62,73],
    [7,9,11,12,13,17,27,31,32,33,35,37,53,56,57,61,79],
@@ -86,6 +88,13 @@ def is_sum_free(part,weak=False):
                 return False
     return True
 
-print(R)
-print(max(max(P) for P in R))
-print(is_sum_free(list_to_bin(R)))
+# print(R)
+# print(max(max(P) for P in R))
+# print(is_sum_free(list_to_bin(R)))
+
+with open("partitions/partition_" + str(k) + ".txt","w") as file:
+    for part in P1:
+        part.sort()
+        for i in part:
+            file.write(str(i)+" ")
+        file.write("\n")
