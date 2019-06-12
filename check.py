@@ -89,6 +89,9 @@ def is_sum_free(part,weak=False):
                 return False
     return True
 
+k = 7
+R = partition_reader(7)
+
 print(is_sum_free(list_to_bin(R)))
 
 with open("partitions/partition_" + str(k) + ".txt","w") as file:
