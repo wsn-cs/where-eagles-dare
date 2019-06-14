@@ -8,6 +8,8 @@ exhaustive de partitions sans-sommes.
 Le dossier MonteCarloMethod contient les codes implémentant un algorithme de Monte Carlo imbriqué pour touver une borne inférieure au
 nombre de Schur.
 
+Le dossier SchurNumberSymmetric contient les codes implémentant une recherche parmi les partitions sans-sommes symétriques, introduites par Fredericksen & Sweet.
+
 ## Membres
 
 Joanna Tomasik
