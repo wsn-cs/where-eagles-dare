@@ -14,8 +14,6 @@ unsigned long schurNumberConstrainedBuild(schur_number_partition_t *partitionstr
     /*Définition des variables*/
     long number_set = 0;
     
-    //schurNumberPrintPartition(p, mp_bits_per_limb * constraint_size, constraint_partition);
-    
     /*Initialisation de la partition*/
     mp_limb_t **partition = partitionstruc->partition;
     mp_limb_t **partitioninvert = partitionstruc->partitioninvert;
@@ -62,9 +60,7 @@ unsigned long schurNumberConstrainedBuild(schur_number_partition_t *partitionstr
             }
             
             /*Intersection*/
-            //mpn_and_n(set2, set1 - size + constraint_size, constraint_partition[j], constraint_size);
             mpn_and_n(work2, work1, constraint_partition[i], constraint_size);
-            //dprint_partitition(fd, 1, 64 * constraint_size, &set2);
             notSumFree = !mpn_zero_p(work2, constraint_size);
             i += notSumFree;
         }
@@ -73,14 +69,10 @@ unsigned long schurNumberConstrainedBuild(schur_number_partition_t *partitionstr
             /*n ne peut être placé nul part*/
             if (is_new_branch) {
                 /*Ecrire la partition*/
-                schurNumberPrintPartition(p, n, partition);
-                //action->func(partition, n-1, action);
-                /*if (n > nbest) {
-                    for (j=0; j<p; j++) {
-                        mpn_copyd(best_partition[j], partition[j], size);
-                    }
+                if (n > nbest) {
+                    schurNumberPrintPartition(p, n, partition);
                     nbest = n;
-                }*/
+                }
             }
             /*Retirer n-1 de la partition*/
             n--;
@@ -108,11 +100,8 @@ unsigned long schurNumberConstrainedBuild(schur_number_partition_t *partitionstr
             i = 0;
             notSumFree = 1;
             is_new_branch = 1;
-            //dprint_partitition(fd, p, n, partition);
         }
     }
-    
-    //dprint_partitition(1, p, nbest, best_partition);
     
     // Nettoyage
     free(work1);
