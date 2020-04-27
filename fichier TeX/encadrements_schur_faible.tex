@@ -1,0 +1,548 @@
+% !TEX encoding = UTF-8 Unicode
+\documentclass[11pt, oneside]{article}   	% use "amsart" instead of "article" for AMSLaTeX format
+\usepackage{geometry}                		% See geometry.pdf to learn the layout options. There are lots.
+\geometry{a4paper}                   		% ... or a4paper or a5paper or ... 
+%\geometry{landscape}                		% Activate for rotated page geometry
+%\usepackage[parfill]{parskip}    		% Activate to begin paragraphs with an empty line rather than an indent
+\usepackage{graphicx}				% Use pdf, png, jpg, or epsÂ§ with pdflatex; use eps in DVI mode
+								% TeX will automatically convert eps --> pdf in pdflatex		
+\usepackage[utf8]{inputenc}
+\usepackage{amssymb}
+\usepackage{amsmath}
+
+%SetFonts
+
+%SetFonts
+
+%Custom commands
+\newcommand{\interval}[2]{\left\{ #1, \dots, #2 \right\}}
+
+%Custom theorems
+\newtheorem{definition}{Définition}
+\newtheorem{theorem}{Théorème}
+\newtheorem{lemme}{Lemme}
+\newtheorem{proposition}{Proposition}
+\newtheorem{corollaire}{Corollaire}
+
+\title{Une borne inférieure sur les nombres de Schur faibles}
+\author{Richard Abou Chaaya, Gabriel Merlin}
+%\date{}							% Activate to display a given date or no date
+
+\begin{document}
+\maketitle
+
+Ce document se propose de trouver une borne inférieure des nombres de Schur faibles
+en construisant de manière récursive et explicite des partitions faiblement sans-sommes avec un nombre d'ensembles variable.
+
+Pour ce faire, nous allons construire deux suites d'entiers positifs $(a_k)$ et $(b_k)$
+ainsi que deux suites de familles d'ensembles $(\mathfrak{A}_k)$ et $(\mathfrak{B}_k)$,
+où $\mathfrak{A}_k = (\mathrm{A}_{k, 1}, \dots, \mathrm{A}_{k, k})$ et $\mathfrak{B}_k = (\mathrm{B}_{k, 1}, \dots, \mathrm{B}_{k, k})$
+sont des familles de $k$ parties finies de $\mathbf{N}$.
+Ces ensembles sont ordonnés de sorte que
+\begin{equation}
+ \min(\mathrm{A}_{k, 1}) < \dots < \min(\mathrm{A}_{k, k}), \\
+ \min(\mathrm{B}_{k, 1}) < \dots < \min(\mathrm{B}_{k, k}).
+\end{equation}
+De plus, nous imposerons les conditions suivantes sur $\mathfrak{A}_k$ et $\mathfrak{B}_k$~:
+\begin{description}
+\item[(i)] $\mathfrak{A}_k = (\mathrm{A}_{k, 1}, \dots, \mathrm{A}_{k, k})$ est une partition faiblement sans-somme de $\interval{1}{a_{k+1} - 1}$;
+\item[(ii)] $\mathfrak{B}_k = (\mathrm{B}_{k, 1}, \dots, \mathrm{B}_{k, k})$ est une partition de $\interval{1}{b_{k+1}-1}$ telle que
+ pour tout $1 \leqslant i \leqslant k$, l'ensemble $\mathrm{C}_{k, i} = \{ b'' - b', (b', b'') \in \mathrm{B}_{k, i} \times \mathrm{B}_{k,i}, b' < b''\}$
+ ne rencontre par $\mathrm{A}_{k, i}$;
+\item[(iii)] $(a_{k+1} - b_{k+1}) + \mathrm{B}_{k, i} + \mathrm{B}_{k, i}$ ne rencontre pas $\mathrm{B}_{k, i}$;
+\item[(iv)] $a_{k+1} + 1$ (resp. $b_{k+1} + 1$) n'est pas une somme restreinte de $\mathrm{A}_{k, 1}$ (resp. n'appartient pas à $\mathrm{A}_{k, 1} + \mathrm{B}_{k, 1}$);
+\item[(v)] $\mathrm{A}_{k, 1} - 1$ et $(a_{k+1} - b_{k+1} - 1) + \mathrm{B}_{k, 1}$ ne rencontrent pas $\mathrm{B}_{k, 1}$;
+\item[(vi)] $\min(\mathrm{B}_{k, 1}) > (a_{k+1} - b_{k+1} - 2)$ et $\max(\mathrm{B}_{k, 1}) < b_{k+1} - 1$;
+\item[(vii)] $b_{k+1} + 2 \notin \mathrm{A}_{k, 1}$ et $(b_{k + 1} + 2) - (a_{k+1} - b_{k+1}) \notin \mathrm{B}_{k, 1}$.
+\end{description}
+
+\section{Construction}
+
+Supposons données des partitions $\mathfrak{A}_{k_0}$ et $\mathfrak{B}_{k_0}$ satisfaisant les conditions pour $k_0 \geqslant 3$.
+Par extension de notation, nous noterons $a_i = \min(\mathrm{A}_{k_0, i})$ et $b_i = \min(\mathrm{B}_{k_0, i})$ pour $1 \leqslant i \leqslant k_0$.
+
+Pour un entier $k \geqslant k_0$, $\mathfrak{A}_{k + 1}$ et $\mathfrak{B}_{k + 1}$ sont construits de la façon suivante~:
+\begin{align}
+  \mathrm{A}_{k + 1, 1} &= \mathrm{A}_{k, 1} \cup \{a_{k+1} + 1\} \cup \left( (2 a_{k+1} + 1) + \mathrm{B}_{k, 1} \right), \\
+  \mathrm{A}_{k + 1, i} &= \mathrm{A}_{k, i} \cup \left( (2 a_{k+1} + 1) + \mathrm{B}_{k, i} \right), \quad 2 \leqslant i \leqslant k, \\
+  \mathrm{A}_{k + 1, k + 1} &= \{ a_{k + 1} \} \cup \{ a_{k+1} + 2, \dots, 2 a_{k+1} + 1\}, \\
+  \mathrm{B}_{k + 1, 1} &= \mathrm{B}_{k, 1} \cup \{ b_{k+1} + 1, a_{k+1} + b_{k+1}\} \cup \left( (a_{k+1} + b_{k+1} + 1) + \mathrm{B}_{k, 1} \right), \\
+  \mathrm{B}_{k + 1, i} &= \mathrm{B}_{k, i} \cup \left( (a_{k+1} + b_{k+1} + 1) + \mathrm{B}_{k, i} \right), \quad 2 \leqslant i \leqslant k, \\
+  \mathrm{B}_{k + 1, k + 1} &= \{b_{k + 1}\} \cup \interval{b_{k + 1} + 2}{a_{k+1} + b_{k+1} - 1} \cup \{a_{k+1} + b_{k+1} + 1\}.
+\end{align}
+Pour clarifier les notations, nous poserons $\tilde{\mathrm{A}}_{k+1, 1} = \{a_{k+1} + 1\}$, $\tilde{\mathrm{A}}_{k+1, i} = \emptyset$
+et $\tilde{\mathrm{B}}_{k+1, 1} = \{b_{k+1} + 1, a_{k+1} + b_{k+1}\}$, $\tilde{\mathrm{B}}_{k+1, i} = \emptyset$.
+
+Vu ces formules, nous nous apercevons que $\min(\mathrm{A}_{k + 1, i}) = \min(\mathrm{A}_{k, i})$ pour $1 \leqslant i \leqslant k$
+et $\min(\mathrm{A}_{k + 1, k + 1}) = a_{k + 1}$, d'où par récurrence sur $k$
+\begin{equation}
+ \min(\mathrm{A}_{k + 1, i}) = a_i,
+\end{equation}
+quel que soit $1 \leqslant i \leqslant k + 1$, et de manière semblable
+\begin{equation}
+ \min(\mathrm{B}_{k + 1, i}) = b_i.
+\end{equation}
+
+Cela permet d'écrire le système d'équations de récurrence suivante~:
+\begin{align}
+ a_{k+1} &= 2 a_k + b_k + 1, \\
+ b_{k+1} &= a_k + 2 b_k + 1,
+\end{align}
+qui se résout en
+\begin{align}
+ a_k &= 3^{k - k_0} \frac{a_{k_0} + b_{k_0} + 1}{2} + \frac{a_{k_0} - b_{k_0} - 1}{2}, \\
+ b_k &= 3^{k - k_0} \frac{a_{k_0} + b_{k_0} + 1}{2} + \frac{a_{k_0} - b_{k_0} + 1}{2}.
+\end{align}
+
+Nous allons ensuite vérifier que les propriétés s'induisent par récurrence.
+
+\section{Caractère de partition}
+
+Vérifions d'abord que les ensembles $\mathrm{A}_{k+1, i}$ sont disjoints.
+Soit d'abord un entier $i$ compris entre $1$ et $k$.
+Comme $\mathrm{A}_{k, i}$ est inclus dans $\interval{1}{a_{k+1} - 1}$
+et $(2 a_{k+1} + 1) + \mathrm{B}_{k, i}$ dans $\interval{2 a_{k+1} + 2}{2a_{k+1} + b_{k+1}}$,
+\begin{multline}
+ \mathrm{A}_{k+1, i} \cap \mathrm{A}_{k+1, k+1} \subset \left( \interval{1}{a_{k+1} - 1} \cup \{a_{k+1} + 1\} \cup \interval{2 a_{k+1} + 2}{2a_{k+1} + b_{k+1}} \right) \cap \\
+  \cap \left( \{ a_{k + 1} \} \cup \{ a_{k+1} + 2, \dots, 2 a_{k+1} + 1\} \right) = \emptyset.
+\end{multline}
+
+Soit à présent $j$ un entiers distinct de $i$ compris lui aussi entre $1$ et $k$.
+Les intervalles $\interval{1}{a_{k+1} - 1}$ et $\interval{2 a_{k+1} + 2}{2a_{k+1} + b_{k+1}}$ ne se rencontrant pas,
+\begin{equation}
+ \mathrm{A}_{k+1, i} \cap \mathrm{A}_{k+1, j} = \left( \mathrm{A}_{k, i} \cap \mathrm{A}_{k, j} \right)
+  \cup \left( (2 a_{k+1} + 1) + \left( \mathrm{B}_{k, i} \cap \mathrm{B}_{k, j} \right)  \right),
+\end{equation}
+et par hypothèse de récurrence $\mathrm{A}_{k+1, i} \cap \mathrm{A}_{k+1, j} = \emptyset$.
+
+Il est aussi clair que les $\mathrm{B}_{k+1, i}$ sont disjoints et recouvrent $\interval{1}{b_{k+1} - 1}$.
+
+\section{Caractère sans-somme}
+
+Voyons maintenant que les $\mathrm{A}_{k+1, i}$ sont faiblement sans-sommes.
+
+Lorsque $i = k + 1$, $\min(\mathrm{A}_{k+1, k+1} \dot{+} \mathrm{A}_{k+1, k+1}) = 2 a_{k + 1} + 2$
+est strictement supérieur à $\max(\mathrm{A}_{k+1, k+1}) = 2 a_{k + 1} + 1$, d'où le caractère faiblement sans-somme.
+
+Sinon, pour $1 \leqslant i \leqslant k$, développons la somme restreinte
+\begin{multline}
+ \mathrm{A}_{k+1, i} \dot{+} \mathrm{A}_{k+1, i} =
+ (\mathrm{A}_{k, i} \dot{+} \mathrm{A}_{k, i}) \cup (\mathrm{A}_{k, i} + \widetilde{\mathrm{A}}_{k, i}) \cup
+ (\mathrm{A}_{k, i} + \mathrm{B}_{k, i} + (2 a_{k+1} + 1)) \cup \\
+ ((\widetilde{\mathrm{A}}_{k, i} \cup \mathrm{B}_{k, i}) \dot{+} (\widetilde{\mathrm{A}}_{k, i} \cup \mathrm{B}_{k, i})),
+\end{multline}
+et considérons son intersection avec $\mathrm{A}_{k+1, i}$.
+
+Tout d'abord, l'ensemble $(\widetilde{\mathrm{A}}_{k, i} \cup \mathrm{B}_{k, i}) \dot{+} (\widetilde{\mathrm{A}}_{k, i} \cup \mathrm{B}_{k, i})$
+ayant un plus petit élément supérieur à $3 (a_{k + 1} + 1) \geqslant a_{k + 2}$, il ne rencontre pas $\mathrm{A}_{k+1, i}$
+si bien qu'il ne contribue pas dans la vérification du caractère sans-somme.
+
+Similairement, l'ensemble $\mathrm{A}_{k, i} + \widetilde{\mathrm{A}}_{k, i}$ est contenu dans $\interval{a_{k+1} + 2}{2 a_{k+1}}$,
+donc aussi dans $\mathrm{A}_{k+1, k+1}$ et par suite il ne rencontre pas non plus $\mathrm{A}_{k+1, i}$.
+
+Ensuite, l'ensemble $\mathrm{A}_{k, i} \dot{+} \mathrm{A}_{k, i}$ est inclus dans $\interval{2}{2 a_{k + 1} - 3}$,
+donc son intersection avec $\mathrm{A}_{k+1, i}$ se réduit à celle avec $\mathrm{A}_{k, i} \cup \widetilde{\mathrm{A}}_{k, i}$
+qui est vide par hypothèse de récurrence.
+
+Enfin, par translation, $(\mathrm{A}_{k, i} + \mathrm{B}_{k, i} + (2 a_{k+1} + 1)) \cap (\mathrm{B}_{k, i} + (2 a_{k+1} + 1))$
+correspond biunivoquement à $(\mathrm{A}_{k, i} + \mathrm{B}_{k, i}) \cap \mathrm{B}_{k, i}$, vide par hypothèse de récurrence.
+
+\section{Propriété (ii)}
+
+Par construction,
+\begin{equation}
+ \mathrm{A}_{k + 1, k + 1} + \mathrm{B}_{k + 1, k + 1} = \{a_{k+1} + b_{k+1}\} \cup \interval{a_{k+1} + b_{k+1} + 2}{3 a_{k+1} + b_{k+1} + 1},
+\end{equation}
+ce qui ne rencontre pas $\mathrm{B}_{k + 1, k + 1}$.
+
+Vérifions à présent la propriété pour les $\mathrm{B}_{k + 1, i}$, $1 \leqslant i \leqslant k$.
+Développons la somme $\mathrm{A}_{k + 1, i} + \mathrm{B}_{k + 1, i}$ suivant $\mathrm{A}_{k + 1, i}$
+\begin{equation}
+ \mathrm{A}_{k + 1, i} + \mathrm{B}_{k + 1, i} = (\mathrm{A}_{k, i} + \mathrm{B}_{k + 1, i}) \cup (\widetilde{\mathrm{A}}_{k, i} + \mathrm{B}_{k + 1, i})
+ \cup ((2 a_{k+1} + 1) + \mathrm{B}_{k, i} + \mathrm{B}_{k + 1, i})
+\end{equation}
+puis étudions chaque terme séparément.
+
+
+La première somme $\mathrm{A}_{k, i} + \mathrm{B}_{k + 1, i}$ se développe de la façon suivante selon $\mathrm{B}_{k + 1, i}$~:
+\begin{equation}
+ \mathrm{A}_{k, i} + \mathrm{B}_{k + 1, i} = (\mathrm{A}_{k, i} + \mathrm{B}_{k, i}) \cup (\mathrm{A}_{k, i} + \widetilde{\mathrm{B}}_{k, i})
+   \cup (\mathrm{A}_{k, i} + \mathrm{B}_{k, i} + (a_{k+1} + b_{k+1} + 1)).
+\end{equation}
+
+Par hérédité, $\mathrm{A}_{k, i} + \mathrm{B}_{k, i}$, ne rencontre ni $\mathrm{B}_{k, i}$,
+ni $\widetilde{\mathrm{B}}_{k, i} \subset \{ b_{k+1} + 1, a_{k+1} + b_{k+1}\}$ grâce à la propriété \textbf{(iv)},
+ni $(a_{k+1} + b_{k+1} + 1) + \mathrm{B}_{k, i}$ car il est borné supérieurement par $a_{k + 1} + b_{k + 1} - 2$.
+
+Puisque tous les éléments de $\mathrm{A}_{k, i} + \mathrm{B}_{k, i} + (a_{k+1} + b_{k+1} + 1)$ sont $\geqslant 2 a_{k+1} + 2 b_{k+1} - 1$,
+et que ce dernier entier est lui-même plus grand que $b_{k + 2}$,
+$\mathrm{A}_{k, i} + \mathrm{B}_{k, i} + (a_{k+1} + b_{k+1} + 1)$ ne rencontre pas non plus $\mathrm{B}_{k+1}$.
+
+Si $i = 1$, alors $\mathrm{A}_{k, 1} + \widetilde{\mathrm{B}}_{k, 1} = (\mathrm{A}_{k, 1} + b_{k+1} + 1) \cup (\mathrm{A}_{k, 1} + a_{k+1} + b_{k+1})$,
+et comme d'une part
+\begin{equation}
+ \mathrm{A}_{k, 1} + b_{k+1} + 1 \subset \interval{b_{k+1} + 2}{a_{k+1} + b_{k+1} - 1} \subset \mathrm{B}_{k + 1, k + 1}
+\end{equation}
+à cause de \textbf{(vi)}, et que d'autre part
+\begin{equation}
+ (\mathrm{A}_{k, 1} + a_{k+1} + b_{k+1}) \cap \mathrm{B}_{k+1, 1} = (a_{k + 1} + b_{k + 1} + 1) + ((\mathrm{A}_{k, 1} - 1) \cap \mathrm{B}_{k, 1})
+\end{equation}
+est vide à cause de \textbf{(v)},
+cet ensemble ne contribue pas à l'intersection.
+Sinon, $\mathrm{A}_{k, 1} + \widetilde{\mathrm{B}}_{k, 1} = \emptyset$.
+
+
+La deuxième somme $\widetilde{\mathrm{A}}_{k, i} + \mathrm{B}_{k + 1, i}$ est vide dès que $i \neq 1$.
+Sinon,
+\begin{equation}
+ \widetilde{\mathrm{A}}_{k, 1} + \mathrm{B}_{k + 1, 1} = ((a_{k+1} + 1) + (\mathrm{B}_{k, 1} \cup \{b_{k + 1} + 1\})) \cup
+  ((2 a_{k+1} + b_{k+1} + 2) + (\{- 2\} \cup \mathrm{B}_{k, 1})).
+\end{equation}
+Le premier terme est inclus dans $\interval{a_{k+1} + 2}{a_{k+1} + b_{k+1} - 1} \cup \{a_{k+1} + b_{k+1} + 2\} \subset \mathrm{B}_{k + 1, k + 1}$,
+donc il ne rencontre pas $\mathrm{B}_{k + 1, 1}$,
+tandis que le second admet pour plus petit élément $2 a_{k+1} + b_{k+1}$ qui est $> b_{k + 2}$.
+
+
+L'intersection de la troisième somme $(2 a_{k+1} + 1) + \mathrm{B}_{k, i} + \mathrm{B}_{k + 1, i}$ avec $\mathrm{B}_{k + 1, i}$
+se réduisant à celle avec $(a_{k+1} + b_{k+1} + 1) + \mathrm{B}_{k, i}$, par translation
+elle correspond biunivoquement à l'intersection de $(a_{k+1} - b_{k+1}) + \mathrm{B}_{k, i} + \mathrm{B}_{k + 1, i}$ avec $\mathrm{B}_{k, i}$.
+En outre, $\mathrm{B}_{k, i} + \mathrm{B}_{k + 1, i}$ se décompose en
+\begin{equation}
+ \mathrm{B}_{k, i} + \mathrm{B}_{k + 1, i} = (\mathrm{B}_{k, i} + \mathrm{B}_{k, i}) \cup
+ (\mathrm{B}_{k, i} + (\widetilde{\mathrm{B}}_{k, i} \cup (a_{k+1} + b_{k+1} + 1) + \mathrm{B}_{k, i})).
+\end{equation}
+En vertu de \textbf{(iii)}, $((a_{k+1} - b_{k+1}) + \mathrm{B}_{k, i} + \mathrm{B}_{k, i}) \cap \mathrm{B}_{k, i} = \emptyset$
+et tous les éléments de $\mathrm{B}_{k, i} + (\widetilde{\mathrm{B}}_{k, i} \cup (a_{k+1} + b_{k+1} + 1) + \mathrm{B}_{k, i})$
+sont $\geqslant b_{k+1} + 2$, donc
+\begin{equation}
+ \left( (a_{k+1} - b_{k+1}) + (\mathrm{B}_{k, i} + (\widetilde{\mathrm{B}}_{k, i} \cup (a_{k+1} + b_{k+1} + 1) + \mathrm{B}_{k, i})) \cap \mathrm{B}_{k, i} \right) = \emptyset.
+\end{equation}
+
+Cela achève la preuve de la propriété \textbf{(ii)} au rang $k+1$.
+
+\section{Propriété (iii)}
+
+Remarquons en préliminaire qu'il résulte des équations de récurrence que $a_k - b_k$ reste constant.
+
+Par définition,
+\begin{equation}
+ (a_{k+1} - b_{k+1}) + \mathrm{B}_{k + 1, k + 1} + \mathrm{B}_{k + 1, k + 1} = \{ a_{k+1} + b_{k+1} \} \cup \interval{a_{k+1} + b_{k+1} + 1}{3 a_{k+1} + b_{k+1} + 2}
+\end{equation}
+qui est bien disjoint de $\mathrm{B}_{k + 1, k + 1}$.
+
+Etudions les ensembles d'indice $i \leqslant k$.
+Comme $\mathrm{B}_{k + 1, i} = (\{ 0, a_{k+1} + b_{k+1} + 1 \} + \mathrm{B}_{k, i}) \cup \widetilde{\mathrm{B}}_{k, i}$,
+\begin{multline}
+ \mathrm{B}_{k + 1, i} + \mathrm{B}_{k + 1, i} = (\{ 0, a_{k+1} + b_{k+1} + 1, 2 (a_{k+1} + b_{k+1} + 1) \} + \mathrm{B}_{k, i} + \mathrm{B}_{k, i}) \\
+ \cup (\{ 0, a_{k+1} + b_{k+1} + 1 \} + \mathrm{B}_{k, i} + \widetilde{\mathrm{B}}_{k, i}) \cup (\widetilde{\mathrm{B}}_{k, i} + \widetilde{\mathrm{B}}_{k, i}).
+\end{multline}
+
+Du fait que $(a_{k+1} - b_{k+1}) + \mathrm{B}_{k, i} + \mathrm{B}_{k, i}$ soit inclus dans $\interval{a_{k+1} - b_{k+1} + 2}{a_{k+1} + b_{k+1} - 2}$,
+\begin{multline}
+ (\{ 0, a_{k+1} + b_{k+1} + 1, 2 (a_{k+1} + b_{k+1} + 1) \} + (a_{k+1} - b_{k+1}) + \mathrm{B}_{k, i} + \mathrm{B}_{k, i}) \cap \mathrm{B}_{k + 1, i} = \\
+ \{ 0, a_{k+1} + b_{k+1} + 1 \} + (((a_{k+1} - b_{k+1}) + \mathrm{B}_{k, i} + \mathrm{B}_{k, i}) \cap \mathrm{B}_{k, i}),
+\end{multline}
+vide par récurrence.
+
+Si $i \geqslant 2$, il n'y a rien d'autre à vérifier. Considérons maintenant $i = 1$.
+D'une part,
+\begin{multline}
+ \{ a_{k+1} - b_{k+1}, 2 a_{k+1} + 1 \} + \mathrm{B}_{k, i} + \widetilde{\mathrm{B}}_{k, i} \subset \{ a_{k+1} + 1, 2 a_{k+1}, 2 a_{k+1} + b_{k+1} + 2, 3 a_{k+1} + b_{k+1} + 1 \} \\
+ + \mathrm{B}_{k, i}.
+\end{multline}
+Les entiers $2 a_{k+1} + b_{k+1} + 2$ et $3 a_{k+1} + b_{k+1} + 1$ étant supérieurs à $b_{k + 2}$, ils n'influent pas dans l'intersection avec $\mathrm{B}_{k + 1, i}$.
+De plus, $a_{k+1} + 1 + \mathrm{B}_{k, 1}$ est inclus dans $\mathrm{B}_{k + 1, k + 1}$ grâce à \textbf{(vi)}.
+Par ailleurs,
+\begin{equation}
+ (2 a_{k+1} + \mathrm{B}_{k, i}) \cap \mathrm{B}_{k + 1, i} = (a_{k+1} + b_{k+1} + 1) + ((a_{k+1} - b_{k+1} - 1 + \mathrm{B}_{k, i}) \cap \mathrm{B}_{k, i});
+\end{equation}
+or, tout élément $x \in (a_{k+1} - b_{k+1} - 1 + \mathrm{B}_{k, 1}) \cap \mathrm{B}_{k, 1}$ vérifierait aussi
+$x + 1 \in (a_{k+1} - b_{k+1} + \mathrm{B}_{k, 1}) \cap (\mathrm{B}_{k, 1} + \mathrm{B}_{k, 1})$, ce qui est impossible,
+donc cette intersection ne comporte aucun élément.
+
+D'autre part,
+\begin{equation}
+ (a_{k+1} - b_{k+1}) + \widetilde{\mathrm{B}}_{k + 1, 1} + \widetilde{\mathrm{B}}_{k + 1, 1} = \{ a_{k+1} + b_{k+1} + 2, 2 a_{k+1} + b_{k+1} + 1, 3 a_{k+1} + b_{k+1} \}
+\end{equation}
+et \textbf{(vi)} garantit que $a_{k+1} + b_{k+1} + 2 \notin \mathrm{B}_{k + 1, 1}$.
+
+\section{Propriété (iv)}
+
+En vertu des équations de récurrence, $a_{k + 2} + 1 = (a_{k+1} + 1) + (a_{k+1} + b_{k+1} + 1)$.
+Supposons par l'absurde que $x$ et $y$ soient des éléments de $\mathrm{A}_{k + 1, 1}$ tels que $x + y = a_{k + 2} + 1$ et $x \leqslant y$.
+L'ensemble $\mathrm{A}_{k + 1, 1}$ se scindant en l'union disjointe de $\mathrm{A}_{k + 1, 1} \cap \interval{1}{a_{k + 1} + 1}$
+et de $\mathrm{A}_{k + 1, 1} \cap \interval{2 a_{k+1} + 1}{a_{k + 2} - 1}$,
+$x$ doit appartenir au premier ensemble et $y$ au second.
+Par suite, $z = y - (2 a_{k+1} + 1)$ appartient à $\mathrm{B}_{k, 1}$ et $x + z = b_{k + 1} + 1$, ce qui contredit \textbf{(iv)} au rang $k$.
+
+De même, soient $x \in \mathrm{A}_{k + 1, 1}$ et $z \in \mathrm{B}_{k + 1, 1}$ tels que $x + z = b_{k + 2} + 1 = (b_{k+1} + 1) + (a_{k+1} + b_{k+1} + 1)$.
+L'ensemble $\mathrm{B}_{k + 1, 1}$ se scinde quant à lui en l'union disjointe de $\mathrm{B}_{k + 1, 1} \cap \interval{1}{b_{k + 1} + 1}$
+et de $\mathrm{B}_{k + 1, 1} \cap \interval{a_{k+1} + b_{k+1}}{b_{k + 2} - 1}$.
+
+Si $x \leqslant z$, alors $x \in \mathrm{A}_{k + 1, 1} \cap \interval{1}{a_{k + 1} + 1}$ et $z \in \mathrm{B}_{k, 1} \cap \interval{a_{k+1} + b_{k+1}}{b_{k + 2} - 1}$.
+Il est impossible que $z = a_{k+1} + b_{k+1}$ à cause de \textbf{(vii)},
+donc $z' = z - (a_{k+1} + b_{k+1} + 1) \in \mathrm{B}_{k, 1}$ et $x + z' = b_{k+1} + 1$.
+
+Si $x \geqslant z$, alors $x \in \mathrm{A}_{k + 1, 1} \cap \interval{2 a_{k+1} + 1}{a_{k + 2} - 1}$
+et $z' = x - (2 a_{k+1} + 1) \in \mathrm{B}_{k, 1}$ et $z' + z = 2 b_{k+1} - a_{k+1} + 1$,
+autrement dit $(a_{k+1} - b_{k+1}) + z + z' = b_{k+1} + 1$, contredisant \textbf{(iii)}.
+
+\section{Propriété (v)}
+
+Par construction,
+\begin{equation}
+ (\mathrm{A}_{k + 1, 1} - 1) \cap \mathrm{B}_{k+1, 1} = (\mathrm{A}_{k+1, 1} - 1) \cap (\mathrm{B}_{k, 1} \cup \{ b_{k+1} + 1, a_{k+1} + b_{k+1}\} \cup ( (a_{k+1} + b_{k+1} + 1) + \mathrm{B}_{k, 1} )).
+\end{equation}
+Considérons chaque terme du développement.
+
+En premier lieu, l'intersection $(\mathrm{A}_{k+1, 1} - 1) \cap \mathrm{B}_{k, 1}$ se réduit à $(\mathrm{A}_{k, 1} - 1) \cap \mathrm{B}_{k, 1}$,
+vu que $a_{k+1} > b{k+1} - 2$, qui est vide par récurrence.
+
+Ensuite, l'intersection $(\mathrm{A}_{k+1, 1} - 1) \cap \{ b_{k+1} + 1, a_{k+1} + b_{k+1}\}$ est vide
+en vertu de \textbf{(vii)} et de $a_{k+1} + b_{k+1} + 1 \in \mathrm{B}_{k+1, k+1}$.
+
+Enfin, l'intersection $(\mathrm{A}_{k+1, 1} - 1) \cap ( (a_{k+1} + b_{k+1} + 1) + \mathrm{B}_{k, 1} )$ se ramène à
+$(a_{k+1} + b_{k+1} + 1) + ( ((a_{k+1} - b_{k+1} - 1) + \mathrm{B}_{k, 1}) \cap \mathrm{B}_{k, 1} )$, à nouveau vide par récurrence.
+
+Procédons de la même façon pour $((a_{k+2} - b_{k+2} - 1) + \mathrm{B}_{k+1, 1}) \cap \mathrm{B}_{k+1, 1}$.
+
+La première intersection devient
+\begin{equation}
+ ((a_{k+2} - b_{k+2} - 1) + \mathrm{B}_{k+1, 1}) \cap \mathrm{B}_{k, 1} = ((a_{k+1} - b_{k+1} - 1) + \mathrm{B}_{k, 1}) \cap \mathrm{B}_{k, 1} = \emptyset.
+\end{equation}
+La deuxième $((a_{k+2} - b_{k+2} - 1) + \mathrm{B}_{k+1, 1}) \cap \{ b_{k+1} + 1, a_{k+1} + b_{k+1}\}$ est vide
+en vertu de \textbf{(vii)} et de $2 b_{k+1} + 1 \in \mathrm{B}_{k+1, k+1}$. La troisième se décompose en
+\begin{multline}
+ ((a_{k+2} - b_{k+2} - 1) + \mathrm{B}_{k+1, 1}) \cap ((a_{k+1} + b_{k+1} + 1) + \mathrm{B}_{k, 1}) =
+ (a_{k+1} + b_{k+1} + 1) + ((\{(a_{k+1} - b_{k+1} - 2\} \cap \mathrm{B}_{k, 1}) \cup \\
+ ((a_{k+1} - b_{k+1} - 1) + \mathrm{B}_{k, 1} \cap \mathrm{B}_{k, 1})),
+\end{multline}
+et est vide à cause de \textbf{(vi)}.
+
+\section{Propriété (vii)}
+
+En vertu des équations de récurrence, nous avons
+\begin{equation}
+ b_{k+2} + 2 = (b_{k+1} + 2) + (a_{k+1} + b_{k+1} + 1)
+\end{equation}
+et
+\begin{equation}
+ (b_{k+2} + 2) - (a_{k+2} - b_{k+2}) = (b_{k+1} + 2) - (a_{k+1} - b_{k+1}) + (a_{k+1} + b_{k+1} + 1).
+\end{equation}
+
+Si $b_{k+2} + 2$ appartenait à $\mathrm{A}_{k + 1, 1}$, alors $b_{k+2} + 2$ serait dans $(2 a_{k+1} + 1) + \mathrm{B}_{k, 1}$,
+autrement dit $(b_{k+1} + 2) - (a_{k+1} - b_{k+1}) \in \mathrm{B}_{k, 1}$ ce qui est impossible par hypothèse de récurrence.
+
+De même, si $(b_{k+2} + 2) - (a_{k+2} - b_{k+2}) \in \mathrm{B}_{k+1, 1}$, alors
+$(b_{k+1} + 2) - (a_{k+1} - b_{k+1})$ serait dans $\mathrm{B}_{k, 1}$ pour $a_{k+1} - b_{k+1} \geqslant 3$,
+contredisant l'hypothèse de récurrence.
+
+
+\section{Quelques résultats généraux}
+
+Soit $\mathfrak{A} = (\mathrm{A}_i)_{1 \leq i \leq p}$ une partition à $p$ ensembles d'un intervalle d'entiers $\interval{1}{m}$.
+Dans toute la suite, les ensembles $\mathrm{A}_i$ sont ordonnés de sorte que
+\begin{equation}\label{eq:ordre_min}
+ \min(\mathrm{A}_1) < \dots < \min(\mathrm{A}_p).
+\end{equation}
+Notons $\mathcal{B}(\mathfrak{A})$ l'ensemble des partitions $(\mathrm{B}_i)_{1 \leqslant i \leqslant p}$ d'intervalles d'entiers $\interval{1}{n}$ telles que
+$(\mathrm{A}_i + \mathrm{B}_i) \cap \mathrm{B}_i = \emptyset$, $1 \leqslant i \leqslant p$.
+
+De plus, l'ensemble de ces partitions $(\mathrm{B}_i)_{1 \leqslant i \leqslant p}$ maximisant $n$ est noté $\mathcal{B}_0(\mathfrak{A})$,
+quand un tel $n$ maximal fini, noté $\beta(\mathfrak{A})$, existe toutefois.
+Ce n'est pas toujours le cas, par exemple la partition
+\begin{equation}
+ \mathrm{A}_1 = \{1\}, \quad, \mathrm{A}_2 = \{2, 3\}, \quad \mathrm{A}_3 = \{4\}
+\end{equation}
+admet des $(\mathrm{B}_i)_{1 \leqslant i \leqslant 3}$ arbitrairement grands, comme
+\begin{equation}
+ \mathrm{B}_1 = \{1, 4\} + 5 \mathbf{N}, \quad, \mathrm{B}_2 = \{2, 3\} + 5 \mathbf{N}, \quad \mathrm{A}_3 = \{5\} + 5 \mathbf{N}.
+\end{equation}
+
+Remarquons que si $(\mathrm{A}'_i)_{1 \leq i \leq p}$ et $(\mathrm{A}''_i)_{1 \leq i \leq p}$ sont des partitions telles que
+pour tout $1 \leqslant i \leqslant p$, $\mathrm{A}'_i \subset \mathrm{A}''_i$,
+alors $\mathcal{B}(\mathfrak{A}') \supset \mathcal{B}(\mathfrak{A}'')$.
+
+Nous allons caractériser de manière récursive sur $p$ les ensembles $\mathcal{B}(\mathfrak{A})$ et $\mathcal{B}_0(\mathfrak{A})$.
+
+\subsection{Le cas à deux ensembles}
+
+Lorsque la partition n'est formée que de deux ensembles $\mathrm{A}_1$ et $\mathrm{A}_2$,
+il est possible de déterminer totalement les ensembles $\mathcal{B}(\mathfrak{A})$ et $\mathcal{B}_0(\mathfrak{A})$.
+
+En vertu de \eqref{eq:ordre_min}, $\min(\mathrm{A}_1) = 1$ et posons $a = \min(\mathrm{A}_2)$.
+Soit $(\mathrm{B}_1, \mathrm{B}_2)$ un élément non vide de $\mathcal{B}(\mathfrak{A})$ maximal au sens de l'inclusion.
+
+Si $1 \in \mathrm{B}_1$, alors du fait que $\interval{1}{a-1} \subset \mathrm{A}_2$, l'intervalle $\interval{2}{a}$ doit être inclus dans $\mathrm{B}_2$.
+Mais cela empêche $a+2$ d'appartenir à $\mathrm{B}_2$, tandis que $a+1$ est libre d'appartenir à $\mathrm{B}_1$ ou à $\mathrm{B}_2$.
+Si $a+1$ appartient à $\mathrm{B}_1$, alors $a+2 \notin \mathrm{B}_1$ et la croissance s'arrête sur une partition de $\interval{1}{a+1}$.
+Sinon, $a + 1 \in \mathrm{B}_2$ et $a+2$ a l'opportunité d'appartenir à $\mathrm{B}_1$ quand $a + 1 \notin \mathrm{A}_1$.
+Cependant, dans ce cas $a + 3 = (a + 1) + 2$ appartient $\mathrm{A}_2 + \mathrm{B}_2$ et la croissance s'arrête encore.
+
+Si maintenant $1 \notin \mathrm{B}_1$, posons $b = \min(\mathrm{B}_1)$.
+Nécessairement $b \leqslant a + 1$.
+
+Ainsi,
+\begin{proposition}
+Soit $(\mathrm{A}_1, \mathrm{A}_2)$ une partition.
+Si $a + 1 \in \mathrm{A}_2$, alors $\mathcal{B}_0(\mathfrak{A})$ admet un unique élément à savoir $(\{1, a+2\}, \interval{2}{a+1})$.
+Sinon, $\mathcal{B}_0(\mathfrak{A})$ admet trois éléments, à savoir $(\{1, a+1\}, \interval{2}{a})$, $(\{1\}, \interval{2}{a+1})$ et $(\{a + 1\}, \interval{1}{a})$.
+\end{proposition}
+
+\subsection{Ajout d'un intervalle plein}
+
+Ici, nous nous intéresserons à la construction récursive de $\mathcal{B}(\mathfrak{A})$ lorsque $\mathrm{A}_p$ est un intervalle $\interval{a'}{a''}$,
+en supposant connu $\mathcal{B}(\mathfrak{A}')$, où $\mathfrak{A}' = (\mathrm{A}_i \cap \interval{1}{a'-1})_{1 \leqslant i \leqslant p-1}$.
+Pour garantir la finitude de nos partitions, nous supposerons en outre que $a'' - a' > \beta(\mathfrak{A}')$.
+
+Considérons une partition $(\mathrm{B}_i)$ de $\mathcal{B}(\mathfrak{A})$ telle que $\mathrm{B}_p$ ne soit pas vide.
+Soient $b' = \min(\mathrm{B}_p)$ et $b'' = \max(\mathrm{B}_p)$.
+Montrons par l'absurde que $b'' - b' < a'$.
+Si ce n'était pas le cas, comme $b' + \interval{a'}{a''}$ ne rencontre pas $\mathrm{B}_p$, alors $b'' > a'' + b'$
+et les éléments de $b' + \interval{a'}{a''}$ se répartiraient parmi les ensembles $\mathrm{B}_1$, …, $\mathrm{B}_{p-1}$.
+Or, cela contredirait le fait qu'aucune partition de $\mathcal{B}(\mathfrak{A}')$ n'est de longueur supérieure à $a'' - a'$, donc $b'' < a' + b'$.
+
+De plus, les ensembles $\mathrm{B}'_i = \mathrm{B}_i \cap \interval{1}{b' - 1}$ et $\mathrm{B}'' = \mathrm{B}_i \cap \interval{b''+1}{+\infty}$
+sont tels que $(\mathrm{B}'_i)_{1 \leqslant i \leqslant p-1}$ et $(\mathrm{B}''_i - b'')_{1 \leqslant i \leqslant p-1}$ appartiennent à $\mathcal{B}(\mathfrak{A}')$.
+Par conséquent, il est possible de définir une application $p$
+de $\mathcal{B}(\mathfrak{A})$ dans $\interval{0}{a'} \times \mathcal{B}(\mathfrak{A}') \times \mathcal{B}(\mathfrak{A}')$
+en posant
+\begin{equation}
+ p(\mathfrak{B}) = ( b'' - b' + 1, (\mathrm{B}'_i)_{1 \leqslant i \leqslant p-1}, (\mathrm{B}''_i - b'')_{1 \leqslant i \leqslant p-1}).
+\end{equation}
+
+Remarquons en outre que pour tout $1 \leqslant i \leqslant p-1$,
+\begin{equation}
+ (\mathrm{B}'_i + \mathrm{A}''_i - b'') \cap (\mathrm{B}''_i - b'') = \emptyset,
+\end{equation}
+ce qui nous conduit à poser la définition suivante.
+
+\begin{definition}
+Soient $\mathfrak{A}^{(1)}$ et $\mathfrak{A}^{(2)}$ des partitions à $k$ ensembles.
+Quel que soit l'entier $a$, est noté $\mathcal{F}_a(\mathfrak{A}^{(1)}, \mathfrak{A}^{(2)})$ l'ensemble des couples
+$(\mathfrak{B}^{(1)}, \mathfrak{B}^{(2)})$ d'éléments de $\mathcal{B}(\mathfrak{A}^{(1)})$ vérifiant pour tout $1 \leqslant i \leqslant k$
+\begin{equation}
+ \left( \mathrm{A}_i^{(2)} + \mathrm{B}_i^{(1)} + a - \max_{1 \leqslant j \leqslant k} \left( \mathrm{B}_j^{(1)} \right) \right) \cap \mathrm{B}_i^{(2)} = \emptyset.
+\end{equation}
+De plus, pour tout couple d'entiers $a_1 \leqslant a_2$ est formé l'ensemble fibré
+\begin{equation}
+ \mathcal{F}_{a_1, a_2}(\mathfrak{A}^{(1)}, \mathfrak{A}^{(2)}) =
+ \bigcup_{a_1 \leqslant a \leqslant a_2} \{a\} \times \mathcal{F}_a (\mathfrak{A}^{(1)}, \mathfrak{A}^{(2)}).
+\end{equation}
+\end{definition}
+
+Grâce à ces définitions, $p$ se réécrit comme une application de $\mathcal{B}(\mathfrak{A})$
+dans $\mathcal{F}_{a'' - a', a''}(\mathfrak{A}', \mathfrak{A}'' - a'')$, que nous noterons de manière abrégée $\mathcal{F}(\mathfrak{A})$.
+
+définir des ensembles $\mathcal{F}_a (\mathfrak{A})$, $0 \leqslant a \leqslant a'$, regroupant tous les couples
+$( (\mathrm{B}'_i)_{1 \leqslant i \leqslant p-1}, (\mathrm{B}''_i)_{1 \leqslant i \leqslant p-1} )$ de $\mathcal{B}(\mathfrak{A}') \times \mathcal{B}(\mathfrak{A}')$
+vérifiant
+\begin{equation}
+ (\mathrm{B}'_i + \mathrm{A}''_i - a - b' + 1) \cap \mathrm{B}''_i = \emptyset.
+\end{equation}
+Assemblons les en un ensemble fibré
+\begin{equation}
+ \mathcal{F}(\mathfrak{A}) = \bigcup_{0 \leqslant a \leqslant a'} \{a\} \times \mathcal{F}_a (\mathfrak{A}),
+\end{equation}
+de sorte que $p$ devienne une application de $\mathcal{B}(\mathfrak{A})$ dans $\mathcal{F}(\mathfrak{A})$.
+
+Cette application $p$ admet une section
+$s \colon \mathcal{F}(\mathfrak{A}) \rightarrow \mathcal{B}(\mathfrak{A})$ définie par
+\begin{equation}
+ s(a, \mathfrak{B}', \mathfrak{B}'') = \left( (\mathrm{B}'_i \cup (\mathrm{B''}_i + b' + a) )_{1 \leqslant i \leqslant p-1}, \interval{b'}{a + b' - 1} \right)
+\end{equation}
+avec $b' = \max_{1 \leqslant i \leqslant p-1}(\mathrm{B}'_i) + 1$.
+
+En effet, cette application $s$ est bien définie et a pour image des partitions à $p$ ensembles d'intervalles d'entiers.
+Il ne reste qu'à voir que son image est bien dans $\mathcal{B}(\mathfrak{A})$.
+
+D'une part, comme $\interval{b'}{a + b' - 1} + \interval{a'}{a''} = \interval{a' + b'}{a + a'' + b' - 1}$ et que $a - 1 < a'$,
+les ensembles $\mathrm{A}_p + \mathrm{B}_p$ et $\mathrm{B}_p$ ne se rencontrent pas.
+
+D'autre part, par hypothèse $(\mathfrak{B}', a, \mathfrak{B}'') \in p(\mathcal{B}(\mathfrak{A}))$,
+donc il admet un antécédent $(\mathrm{B}_i)_{1 \leqslant i \leqslant p} \in \mathcal{B}(\mathfrak{A})$.
+Or, $\mathrm{B}'_i \cup (\mathrm{B''}_i + b' + a) \subset \mathrm{B}_i$ pour $1 \leqslant i \leqslant p-1$,
+si bien que $(\mathrm{A}_i + (\mathrm{B}'_i \cup (\mathrm{B''}_i + b' + a)))$ ne rencontre pas $\mathrm{B}'_i \cup (\mathrm{B''}_i + b' + a)$.
+
+L'existence de cette section $s$ assure que $p$ est une surjection sur $\mathcal{F}(\mathfrak{A})$.
+Cela fournit déjà une borne supérieure de $\beta$.
+
+\begin{proposition}
+Soit $(\mathrm{A}_i)_{1 \leqslant i \leqslant p}$ une partition telle que $\mathrm{A}_p = \interval{a'}{a''}$,
+que les partitions de $\mathcal{B}((\mathrm{A}_i \cap \interval{1}{a'-1})_{1 \leqslant i \leqslant p-1})$ contiennent au plus $b$ entiers
+et que $a'' - a' > b$.
+Alors les partitions de $\mathcal{B}((\mathrm{A}_i)_{1 \leqslant i \leqslant p})$ contiennent au plus $a' + 2b$ entiers.
+\end{proposition}
+
+Cette borne supérieure $a' + 2b$ devient atteinte si et seulement si $\mathcal{F}_{a''}(\mathfrak{A})$ n'est pas vide.
+
+En effet, si $\mathfrak{B}$ réalise cette borne supérieure, alors $p(\mathfrak{B}) \in \mathcal{F}_{a''}(\mathfrak{A})$,
+et inversement, tout élément de $\mathcal{F}_{a''}(\mathfrak{A})$ fournit, à l'aide de la section $s$, un $\mathfrak{B}$ partitionnant $\interval{1}{a' + 2b}$.
+
+\subsubsection{Expression des fibres}
+
+Exprimons de manière récursive $\mathcal{F}_a(\mathfrak{A}, \mathfrak{C})$, $\mathfrak{C}$ étant une partition à $p$ ensembles,
+à l'aide de $\mathcal{F}(\mathfrak{A})$.
+Pour procéder de façon récursive, nous pouvons remarquer que seules les fibres d'indice compris entre $a'' - a'$ et $a''$ ont été utiles ci-dessus.
+Nous nous intéresserons donc qu'à des $a \geqslant 2 a' + 4 \beta - 2$.
+
+Décomposons $\mathfrak{C}$ selon l'application $p$ en $(c'' - c' + 1, \mathfrak{C}', \mathfrak{C}'')$,
+avec $c' = \min \mathrm{C}_p$ et $c'' = \max \mathrm{C}_p$.
+
+Soit $(\mathfrak{B}^{(1)}, \mathfrak{B}^{(2)})$ un couple de $\mathcal{F}_a(\mathfrak{A}, \mathfrak{C})$,
+partition respective de $\interval{1}{n_1}$ et de $\interval{1}{n_2}$.
+Pour tout $1 \leqslant i \leqslant p-1$, la somme $\mathrm{C}_i + \mathrm{B}_i^{(1)}$ se décompose en
+\begin{equation}
+ \mathrm{C}_i + \mathrm{B}_i^{(1)} = \left( \mathrm{C}'_i + \mathrm{B}_i^{(1)\prime} \right) \cup \left( \mathrm{C}'_i + \mathrm{B}_i^{(1)\prime\prime} \right)
+ \cup \left( \mathrm{C}''_i + \mathrm{B}_i^{(1)} \right) .
+\end{equation}
+Chaque terme de cette union est contenu dans un des intervalles suivants:
+\begin{align}
+ \mathrm{C}'_i + \mathrm{B}_i^{(1)\prime} & \subset \interval{2}{b'_1 + c' - 2} \\
+ \mathrm{C}'_i + \mathrm{B}_i^{(1)\prime\prime} & \subset \interval{b''_1 + 2}{n_1 + c' - 1} \\
+ \mathrm{C}''_i + \mathrm{B}_i^{(1)} & \subset \interval{c'' + 2}{n_1 + n_c}
+\end{align}
+
+Comme $n_1$ et $n_2$ sont $\leqslant a' + 2 \beta$ et que $a \geqslant 2 a' + 4 \beta - 2$,
+\begin{equation}
+ c'' + a - n_1 + 2 \geqslant c'' + a - a' - 2 \beta + 2 \geqslant c'' + a' + 2 \beta > n_2
+\end{equation}
+si bien que $\mathrm{C}''_i + \mathrm{B}_i^{(1)} + a - n_1$ ne saurait rencontrer $\mathrm{B}_i^{(2)}$.
+
+Cela nous fournit une méthode pour construire une suite de partitions faiblement sans-sommes croissantes.
+
+\begin{proposition}
+Soient $(\mathrm{A}_i)_{1 \leqslant i \leqslant n_0}$ une partition faiblement sans-somme de $\interval{1}{a_{n_0} - 1}$,
+et $(\mathrm{B}_i)_{1 \leqslant i \leqslant n_0}$ une partition de $\interval{1}{b_{n_0} - 1}$ compatible avec la première.
+Alors il existe une suite de partitions faiblement sans-sommes $(\mathrm{A}_i)_{1 \leqslant i \leqslant n}$, $n \geqslant n_0$,
+de $\interval{1}{a_n}$ avec
+\begin{equation}
+ a_n = 3^{n - n_0} \frac{a_{n_0} + b_{n_0}}{2} + \frac{a_{n_0} - b_{n_0}}{2} - \frac{3^{n-n_0} - 1}{4} + \frac{n - n_0}{2}.
+\end{equation}
+\end{proposition}
+
+\subsection{Ajout d'un intervalle troué}
+
+Procédons comme précédemment, mais dans le cas où $\mathrm{A}_p$ est un intervalle avec un trou en deuxième position $\{a'\} \cup \interval{a' + 2}{a''}$.
+Reprenons l'application $p$ dans ces conditions.
+
+Soient une partition $(\mathrm{B}_i)$ de $\mathcal{B}(\mathfrak{A})$ telle que $\mathrm{B}_p$ ne soit pas vide,
+$b' = \min(\mathrm{B}_p)$ et $b'' = \max(\mathrm{B}_p)$.
+Nous avons que $b'' - b' < a' + 2$, car sinon,
+$b'' > a'' + b'$ et l'intervalle $\interval{a' + b' + 2}{a'' + b'}$ serait recouvert par les $p - 1$ premiers ensembles,
+contredisant le fait que $\beta < a'' - a' - 1$.
+Il est aussi impossible que $b'' - b' = a'$, parce que $a' + b' \in \mathrm{A}_p + \mathrm{B}_p$.
+
+Par conséquent, l'application $p$ prend ses valeurs dans $(\interval{0}{a'} \cup \{a' + 2\}) \times \mathcal{B}(\mathfrak{A}') \times \mathcal{B}(\mathfrak{A}')$.
+Son image $\mathcal{F}(\mathfrak{A})$ ressemble au cas d'un intervalle plein,
+à ceci près que la fibre d'indice $a' + 2$ est $\{a' + 2\} \times \mathcal{F}_{a'' + 2}(\mathfrak{A}', \mathfrak{A}'' - a'')$
+intersecté avec $\mathcal{B}_{+1}(\mathfrak{A}) \times \mathcal{B}_{-1}(\mathfrak{A})$.
+
+Notons $\mathcal{B}_{+1}(\mathfrak{A})$ (resp. $\mathcal{B}_{-1}(\mathfrak{A})$) les partitions de $\mathcal{B}(\mathfrak{A})$ compatibles
+avec un trou à leur fin (resp. à leur début), autrement dit telle qu'il existe un indice $i$ de sorte que
+\begin{equation}
+ \left( \max_{1 \leqslant j \leqslant p-1}(\mathrm{B}_j) - \mathrm{A}_i \right) \cap \mathrm{B}_i = \emptyset
+\end{equation}
+(resp. $(\mathrm{A}_i - 1) \cap \mathrm{B}_i = \emptyset$).
+
+\end{document}  
